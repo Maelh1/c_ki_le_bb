@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Classement – Qui était ce bébé ?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<style>
+html,body{margin:0;background:#FBFAF6;color:#141413}
+*{box-sizing:border-box}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-8px) rotate(-3deg)}}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.serif{font-family:'Instrument Serif',serif;font-weight:400}
+.caps{font-size:clamp(13px,.9vw,18px);letter-spacing:.14em;text-transform:uppercase;color:#6B6B66}
+.board{height:100vh;overflow:hidden;font-family:'Instrument Sans',Helvetica,sans-serif;display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,22vw);grid-template-rows:minmax(0,1fr) auto;background:#FBFAF6;color:#141413}
+.main{grid-column:1;grid-row:1;padding:3.5vh 3.5vw 2vh;display:flex;flex-direction:column;gap:2.4vh;min-width:0;min-height:0}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.head h1{margin:0;font-size:clamp(40px,4.6vw,92px);line-height:.9;letter-spacing:-.02em}
+.head em{color:#8F6F24}
+.live{display:flex;align-items:center;gap:10px;white-space:nowrap}
+.live i{width:10px;height:10px;border-radius:50%;background:#C9A24A}
+.toast{display:flex;align-items:center;gap:16px;background:#141413;color:#fff;padding:1.2vh 1.4vw;font-size:clamp(18px,1.4vw,28px);border-radius:999px}
+.toast .badge{background:#C9A24A;color:#141413;font-weight:700;padding:.2em .7em;border-radius:999px;font-size:.8em;letter-spacing:.06em;text-transform:uppercase}
+.toast strong{font-weight:700}
+.stage{display:flex;flex-direction:column;gap:2.4vh;min-height:0;flex:1}
+.empty{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.empty .serif{font-size:clamp(36px,3.6vw,72px);line-height:1}
+.empty span:last-child{font-size:clamp(16px,1.3vw,26px);color:#6B6B66}
+
+.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:1.6vw;height:44vh;min-height:280px;flex:none}
+.col{display:flex;flex-direction:column;justify-content:flex-end;height:100%;gap:1.2vh;min-width:0}
+.who{display:flex;flex-direction:column;align-items:center;gap:.4vh;text-align:center;min-width:0}
+.who .serif{font-size:clamp(28px,2.8vw,56px);line-height:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who .pts{font-size:clamp(16px,1.2vw,24px);font-weight:600;font-variant-numeric:tabular-nums}
+.pts span,.row .pts span{opacity:.45;font-weight:400}
+.c1 .who .serif{font-style:italic;font-size:clamp(36px,3.8vw,76px);color:#8F6F24;padding-right:.15em}
+.c1 .who .pts{font-size:clamp(18px,1.4vw,28px);font-weight:700}
+.step{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.6vh;text-align:center;border-radius:24px 24px 0 0;padding-top:2vh}
+.step .n{line-height:.8}
+.step .lbl{font-size:clamp(12px,.85vw,16px);letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:0 8px}
+.c1 .step{height:74%;background:#C9A24A;color:#111110;border-radius:28px 28px 0 0;padding:7vh 8px 0;position:relative}
+.c1 .step .n{font-size:clamp(110px,11vw,220px)}
+.c1 .step .lbl{font-size:clamp(12px,.9vw,17px);font-weight:700;padding:0}
+.c2 .step{height:56%;background:#141413;color:#fff}
+.c2 .step .n{font-size:clamp(80px,8vw,160px)}
+.c3 .step{height:42%;background:#ECE6D6;color:#141413}
+.c3 .step .n{font-size:clamp(70px,7vw,140px)}
+.c3 .step .lbl{color:#5E5846}
+.medal{position:absolute;top:2vh;left:0;right:0;display:flex;justify-content:center;pointer-events:none}
+.medal span{background:#fff;color:#141413;border:2px solid #141413;border-radius:999px;padding:.45em 1em;font-size:clamp(11px,.8vw,15px);font-weight:700;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;animation:bob 3s ease-in-out infinite}
+
+.rest-head{display:flex;align-items:baseline;gap:16px;border-top:1px solid #DDD6C4;padding-top:1.6vh}
+.rest{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-flow:column;column-gap:1.4vw;row-gap:.8vh;align-content:start;min-height:0;overflow:hidden}
+.row{display:grid;grid-template-columns:2.2em minmax(0,1fr) auto;align-items:center;gap:.6em;padding:.7vh .9vw;border-radius:999px;font-size:clamp(16px,1.25vw,26px);background:#F1ECDF;color:#141413;transition:background 1.6s ease,color 1.6s ease}
+.row .rk{font-size:1.2em;line-height:1;color:#8F6F24;transition:color 1.6s ease}
+.row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .pts{font-variant-numeric:tabular-nums;font-weight:600}
+.row.fresh{background:#C9A24A}
+.row.fresh .rk{color:#141413}
+
+.side{grid-column:2;grid-row:1 / span 2;background:#141413;color:#fff;padding:3.5vh 2vw;display:flex;flex-direction:column;gap:2vh;min-height:0;overflow:hidden}
+.side .caps{color:#B4B4AC}
+.count{font-size:clamp(90px,9vw,190px);line-height:.8;letter-spacing:-.03em}
+.count-lbl{font-size:clamp(16px,1.15vw,24px);color:#D6D6CE;text-wrap:pretty}
+.join{display:flex;flex-direction:column;gap:1.4vh}
+.join .serif{font-size:clamp(30px,2.5vw,52px);line-height:1}
+.join em{color:#C9A24A}
+.qr{background:#fff;padding:1vw;border:1.5px solid #C9A24A;border-radius:20px;aspect-ratio:1;width:100%;max-width:min(320px,34vh)}
+.qr svg,.qr img{display:block;width:100%;height:100%}
+.url{font-size:clamp(13px,.9vw,18px);color:#B4B4AC;word-break:break-all}
+
+.ticker{grid-column:1;grid-row:2;background:#C9A24A;color:#111110;overflow:hidden;white-space:nowrap;padding:1.2vh 0;font-size:clamp(16px,1.2vw,24px);font-weight:600;min-width:0;min-height:calc(2.4vh + 1.3em)}
+.ticker > div{display:inline-flex;animation:marq 28s linear infinite}
+.ticker span{padding-left:2vw}
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="main">
+    <div class="head">
+      <h1 class="serif">Qui était <em>ce bébé</em>&nbsp;?</h1>
+      <div class="live caps"><i></i><span>En direct</span></div>
+    </div>
+    <div id="toast"></div>
+    <div class="stage" id="stage"></div>
+  </div>
+
+  <div class="side">
+    <span class="caps">Participants</span>
+    <span class="serif count" id="count">0</span>
+    <span class="count-lbl" id="countLbl"></span>
+    <div style="flex:1"></div>
+    <div class="join">
+      <span class="serif">À vous de <em>jouer</em></span>
+      <div class="qr" id="qr" role="img" aria-label="QR code du jeu"></div>
+      <span class="url" id="url"></span>
+    </div>
+  </div>
+
+  <div class="ticker" id="ticker"></div>
+</div>
+
+<script src="config.js"></script>
+<script src="shared.js"></script>
+<script>
+const { esc, parseMessage, fetchScores, subscribe } = Shared;
+const params = new URLSearchParams(location.search);
+const STORE = 'bebes_board_' + window.CANAL;
+const CUTOFF = 'bebes_cutoff_' + window.CANAL;
+const DEMO = [['Camille',19],['Thomas',14],['Julie',22],['Antoine',9],['Sarah',17],['Maxime',11],['Chloé',17],['Romain',6],['Laura',13],['Hugo',20],['Kevin',3],['Marion',15]];
+const QUIPS = ['Respect.', 'Pas mal du tout.', 'On a vu pire.', 'Aïe.'];
+
+const ls = {
+  get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+};
+
+// scoreboard.html?reset → on repart de zéro (les scores précédents sont ignorés)
+if (params.has('reset')) {
+  ls.set(CUTOFF, Math.floor(Date.now() / 1000));
+  ls.set(STORE, []);
+  params.delete('reset');
+  history.replaceState(null, '', location.pathname + (params.toString() ? '?' + params : ''));
+}
+const cutoff = ls.get(CUTOFF, 0);
+const demo = params.has('demo');
+
+// Les scores sont aussi gardés localement : ntfy.sh ne conserve les messages que 12 h.
+const scores = new Map(ls.get(STORE, []).map(s => [s.id, s]));
+let freshId = null, toast = null, toastTimer = null;
+
+function add(msg, announce) {
+  const s = parseMessage(msg);
+  if (!s || s.time < cutoff || scores.has(s.id)) return false;
+  scores.set(s.id, s);
+  ls.set(STORE, [...scores.values()]);
+  if (announce) {
+    freshId = s.id;
+    toast = s;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast = null;
+      renderToast();
+      const row = document.querySelector('.row.fresh');
+      if (row) row.classList.remove('fresh');
+      freshId = null;
+    }, 6000);
+  }
+  return true;
+}
+
+// ── Rendu ──────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+
+function ranked() {
+  let list = [...scores.values()];
+  if (demo && !list.length) list = DEMO.map(([name, score], i) => ({ id: 'd' + i, name, score, total: 25, ts: i }));
+  const sorted = list.sort((a, b) => b.score - a.score || a.ts - b.ts);
+  let prev = null, rank = 0;
+  return sorted.map((s, i) => {
+    if (s.score !== prev) { rank = i + 1; prev = s.score; }
+    return { ...s, rank };
+  });
+}
+
+const pts = s => `${s.score}<span>/${s.total}</span>`;
+
+function podiumCol(cls, s, n, label, extra = '') {
+  if (!s) return `<div class="col ${cls}"></div>`;
+  return `<div class="col ${cls}">
+    <div class="who"><span class="serif">${esc(s.name)}</span><span class="pts">${pts(s)}</span></div>
+    <div class="step">${extra}<span class="serif n">${n}</span><span class="lbl">${label}</span></div>
+  </div>`;
+}
+
+function render() {
+  const r = ranked();
+  const n = r.length;
+
+  if (!n) {
+    $('stage').innerHTML = `<div class="empty">
+      <span class="serif">Personne n'a encore osé.</span>
+      <span>Scannez le QR code pour être le premier à se ridiculiser.</span>
+    </div>`;
+  } else {
+    const rest = r.slice(3);
+    $('stage').innerHTML = `
+      <div class="podium">
+        ${podiumCol('c2', r[1], 2, 'Presque voyant·e')}
+        ${podiumCol('c1', r[0], 1, 'Connaît tout le monde', '<div class="medal"><span>Médium certifié</span></div>')}
+        ${podiumCol('c3', r[2], 3, 'Bon instinct')}
+      </div>
+      ${rest.length ? `
+      <div class="rest-head"><span class="caps">Le reste de la troupe</span></div>
+      <div class="rest" style="grid-template-rows:repeat(${Math.max(3, Math.ceil(rest.length / 3))},auto)">
+        ${rest.map(s => `<div class="row${s.id === freshId ? ' fresh' : ''}">
+          <span class="serif rk">${s.rank}</span><span class="nm">${esc(s.name)}</span><span class="pts">${pts(s)}</span>
+        </div>`).join('')}
+      </div>` : ''}`;
+  }
+
+  $('count').textContent = n;
+  $('countLbl').textContent = n === 0 ? 'Aucun courageux pour l’instant.' : n === 1 ? 'personne a déjà tenté sa chance.' : 'personnes ont déjà tenté leur chance.';
+
+  const last = n > 3 ? r[n - 1] : null;
+  const tick = last ? `Lanterne rouge : ${last.name} (${last.score}/${last.total}), qui n'a visiblement jamais vu un bébé de sa vie   ✦   Vous pouvez encore faire pire   ✦   ` : '';
+  const ticker = $('ticker');
+  if (ticker.dataset.text !== tick) {   // ne pas relancer le défilement si rien n'a changé
+    ticker.dataset.text = tick;
+    const t = esc(tick.repeat(3));
+    ticker.innerHTML = last ? `<div><span>${t}</span><span>${t}</span></div>` : '';
+  }
+  renderToast();
+}
+
+function renderToast() {
+  const t = toast;
+  if (!t) { $('toast').innerHTML = ''; return; }
+  const r = t.score / t.total;
+  const quip = QUIPS[r >= .8 ? 0 : r >= .55 ? 1 : r >= .3 ? 2 : 3];
+  $('toast').innerHTML = `<div class="toast"><span class="badge">Nouveau</span>
+    <span><strong>${esc(t.name)}</strong> termine avec ${t.score}/${t.total}. ${quip}</span></div>`;
+}
+
+// ── QR code vers le jeu ────────────────────────────────
+const gameUrl = location.origin + location.pathname.replace(/[^/]*$/, '');
+$('url').textContent = gameUrl.replace(/^https?:\/\//, '');
+try {
+  const qr = qrcode(0, 'M');
+  qr.addData(gameUrl);
+  qr.make();
+  $('qr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+} catch (e) {
+  $('qr').innerHTML = `<img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=0&data=${encodeURIComponent(gameUrl)}">`;
+}
+
+// ── Temps réel ─────────────────────────────────────────
+async function poll(announce) {
+  try {
+    const msgs = await fetchScores(cutoff ? cutoff : 'all');
+    let changed = false;
+    msgs.forEach(m => { changed = add(m, announce) || changed; });
+    if (changed) render();
+  } catch (e) {}
+}
+
+render();
+poll(false).then(() => {
+  subscribe(Math.floor(Date.now() / 1000) - 5, m => { if (add(m, true)) render(); });
+  // Filet de sécurité si la connexion temps réel décroche.
+  setInterval(() => poll(true), 30000);
+});
+</script>
+</body>
+</html>

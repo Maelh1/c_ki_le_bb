@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FBFAF6">
+<title>Qui était ce bébé ?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:#FBFAF6;color:#141413;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box}
+button{font:inherit;-webkit-appearance:none;appearance:none}
+input::placeholder{color:#9A9A95}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-6px) rotate(-3deg)}}
+.serif{font-family:'Instrument Serif',serif;font-weight:400}
+.app{min-height:100vh;min-height:100dvh;max-width:520px;margin:0 auto;font-family:'Instrument Sans',Helvetica,sans-serif;display:flex;flex-direction:column}
+.caps{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#6B6B66}
+.sticker{background:#C9A24A;color:#141413;border:2px solid #141413;border-radius:999px;padding:.45em 1em;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;animation:bob 3s ease-in-out infinite}
+.stripes{background:repeating-linear-gradient(135deg,#F1ECDF 0 6px,#ECE6D6 6px 12px)}
+.photo{position:absolute;inset:0;background-size:cover;background-position:center}
+
+/* Accueil */
+.home{flex:1;display:flex;flex-direction:column;padding:28px 24px 32px;gap:28px}
+.home-top{display:flex;justify-content:space-between;align-items:center}
+.home-mid{flex:1;display:flex;flex-direction:column;justify-content:center;gap:20px}
+.home-mid .sticker{align-self:flex-start}
+.home h1{margin:0;font-size:64px;line-height:.95;letter-spacing:-.02em;text-wrap:balance}
+em.gold{color:#8F6F24}
+.lead{margin:0;font-size:17px;line-height:1.5;color:#45453F;text-wrap:pretty}
+.form{display:flex;flex-direction:column;gap:12px}
+.form label{font-size:13px;font-weight:600;letter-spacing:.04em}
+.form input{font:inherit;font-size:20px;padding:16px 18px 16px 22px;border:1.5px solid #141413;border-radius:999px;background:#fff;outline:none;color:#141413;width:100%}
+.btn-main{width:100%;font-size:18px;font-weight:600;min-height:58px;border:0;border-radius:999px;background:#141413;color:#fff;cursor:pointer}
+.btn-main:disabled{opacity:.35;cursor:default}
+.note{margin:4px 0 0;font-size:13px;color:#6B6B66;text-align:center}
+
+/* Grille */
+.game{display:flex;flex-direction:column;flex:1}
+.bar{position:sticky;top:0;z-index:5;background:#FBFAF6;padding:18px 20px 14px;border-bottom:1px solid #E6DFCC;display:flex;flex-direction:column;gap:10px}
+.bar-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.bar-row .serif{font-size:28px;line-height:1;min-width:0;overflow-wrap:anywhere}
+.count{font-size:14px;font-weight:600;white-space:nowrap}
+.count .tot{color:#9A9A95}
+.rail{height:8px;border-radius:999px;background:#ECE6D6;overflow:hidden}
+.fill{height:8px;border-radius:999px;background:#C9A24A;width:0;transition:width .3s}
+.help{font-size:13px;color:#6B6B66}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:14px 14px 120px}
+.tile{position:relative;aspect-ratio:3/4;padding:0;border:0;cursor:pointer;overflow:hidden;border-radius:16px;outline:none;outline-offset:2px;display:block;width:100%}
+.tile.on{outline:3px solid #141413}
+.num{position:absolute;top:6px;left:6px;font:600 11px/1 'Instrument Sans',sans-serif;background:#fff;color:#141413;padding:4px 7px;border-radius:999px}
+.tag{position:absolute;left:5px;right:5px;bottom:5px;border-radius:999px;background:#141413;color:#fff;font:500 13px/1.2 'Instrument Sans',sans-serif;padding:7px 6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,#FBFAF6 70%,rgba(251,250,246,0))}
+.dock > div{max-width:488px;margin:0 auto}
+.dock .btn-main.ready{background:#C9A24A;color:#141413}
+
+/* Résultat */
+.done{flex:1;display:flex;flex-direction:column;padding:28px 24px 32px;gap:24px}
+.done-mid{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.scorecard{display:flex;align-items:baseline;gap:8px;background:#C9A24A;color:#141413;border-radius:28px;padding:22px 26px 18px;position:relative}
+.scorecard .sticker{position:absolute;top:-14px;right:16px;background:#141413;color:#fff;border:0}
+.big{font-size:150px;line-height:.85;letter-spacing:-.04em}
+.of{font-size:48px;opacity:.55}
+.done h2{margin:0;font-size:36px;line-height:1.05;text-wrap:balance}
+.foot{border-top:1px solid #141413;padding-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:15px}
+.dot{width:10px;height:10px;border-radius:50%;background:#C9A24A;flex:none}
+
+/* Sheet */
+.sheet-wrap{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;justify-content:flex-end}
+.veil{position:absolute;inset:0;background:rgba(20,20,19,.45)}
+.sheet{position:relative;max-width:520px;width:100%;margin:0 auto;background:#FBFAF6;max-height:78vh;display:flex;flex-direction:column;border-radius:28px 28px 0 0;overflow:hidden;font-family:'Instrument Sans',Helvetica,sans-serif}
+.sheet-head{display:flex;gap:14px;align-items:center;padding:16px 18px;border-bottom:1px solid #E6DFCC}
+.thumb{width:48px;height:64px;flex:none;position:relative;overflow:hidden;border-radius:10px}
+.sheet-title{flex:1;display:flex;flex-direction:column;gap:2px}
+.sheet-title .caps{letter-spacing:.1em}
+.sheet-title .serif{font-size:26px;line-height:1.05}
+.close{width:44px;height:44px;flex:none;border:1px solid #141413;border-radius:50%;background:transparent;font-size:20px;cursor:pointer;color:#141413;padding:0}
+.opts{overflow-y:auto;padding:12px 14px calc(16px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opt{min-height:52px;font-size:16px;text-align:left;padding:10px 16px;border-radius:16px;border:1.5px solid #F1ECDF;background:#F1ECDF;color:#141413;cursor:pointer;display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0}
+.opt b{font-weight:500;overflow-wrap:anywhere}
+.opt small{font-size:11px;opacity:.7}
+.opt.cur{background:#141413;border-color:#141413;color:#fff}
+.opt.used{background:#FBFAF6;border-color:#E6DFCC;color:#8A8578}
+.unset{grid-column:1/-1;min-height:48px;font-size:15px;border:0;background:transparent;color:#6B6B66;text-decoration:underline;cursor:pointer}
+
+/* Confirmation */
+.modal{position:fixed;inset:0;z-index:30;background:rgba(20,20,19,.55);display:flex;align-items:center;justify-content:center;padding:24px;font-family:'Instrument Sans',Helvetica,sans-serif}
+.card{background:#FBFAF6;max-width:420px;width:100%;padding:24px;border-radius:28px;display:flex;flex-direction:column;gap:16px}
+.card .serif{font-size:32px;line-height:1.05}
+.card p{margin:0;font-size:16px;line-height:1.5;color:#45453F}
+.card-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card-btns button{min-height:52px;font-size:16px;border-radius:999px;cursor:pointer;color:#141413}
+.b-back{border:1.5px solid #141413;background:transparent}
+.b-ok{border:0;background:#C9A24A;font-weight:600}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div id="layer"></div>
+
+<script src="config.js"></script>
+<script src="shared.js"></script>
+<script>
+const { esc, shuffled, publishScore } = Shared;
+const BEBES = window.BEBES;
+const TOTAL = BEBES.length;
+// ORDER[position affichée] = index du bébé dans la config
+const ORDER = shuffled(TOTAL, window.MELANGE || 0);
+const SORTED = BEBES.map((b, i) => ({ n: b.prenom, i })).sort((a, b) => a.n.localeCompare(b.n, 'fr'));
+const KEY = 'bebes_session_' + window.CANAL;
+const bg = i => `url('${encodeURI(BEBES[i].photo).replace(/'/g, '%27')}')`;
+
+let S = { screen: 'home', player: '', assign: {}, score: 0, entry: null, sent: false };
+let active = null;
+
+try {
+  const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+  if (saved && saved.total === TOTAL) S = { ...S, ...saved };
+} catch (e) {}
+
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify({ ...S, total: TOTAL })); } catch (e) {}
+}
+function set(patch) { S = { ...S, ...patch }; save(); }
+
+const app = document.getElementById('app');
+const layer = document.getElementById('layer');
+
+// ── Écrans ─────────────────────────────────────────────
+function render() {
+  window.scrollTo(0, 0);
+  if (S.screen === 'home') renderHome();
+  else if (S.screen === 'game') renderGame();
+  else renderDone();
+}
+
+function renderHome() {
+  app.innerHTML = `
+  <div class="home">
+    <div class="home-top caps"><span>Crémaillère</span><span>${TOTAL} bébés</span></div>
+    <div class="home-mid">
+      <div class="sticker">Aucune pitié</div>
+      <h1 class="serif">Qui était <em class="gold">ce bébé</em>&nbsp;?</h1>
+      <p class="lead">Vos amis ont un jour eu des joues rebondies et zéro responsabilité. À vous de retrouver qui est qui.</p>
+    </div>
+    <form class="form" id="f">
+      <label for="name">Votre prénom</label>
+      <input id="name" autocomplete="given-name" maxlength="40" placeholder="Ex. Camille R.">
+      <button class="btn-main" id="go" disabled>Commencer</button>
+      <p class="note">Pas de chrono. Une seule partie. Aucune pitié.</p>
+    </form>
+  </div>`;
+  const input = app.querySelector('#name'), go = app.querySelector('#go');
+  input.value = S.player;
+  const sync = () => { go.disabled = !input.value.trim(); };
+  sync();
+  input.oninput = () => { S.player = input.value; sync(); };
+  app.querySelector('#f').onsubmit = e => {
+    e.preventDefault();
+    const name = input.value.trim();
+    if (!name) return;
+    input.blur();
+    set({ player: name, screen: 'game' });
+    render();
+  };
+}
+
+function renderGame() {
+  app.innerHTML = `
+  <div class="game">
+    <div class="bar">
+      <div class="bar-row">
+        <span class="serif">Bonne chance, ${esc(S.player)}</span>
+        <span class="count"><span id="cnt">0</span><span class="tot">/${TOTAL}</span></span>
+      </div>
+      <div class="rail"><div class="fill" id="fill"></div></div>
+      <span class="help">Touchez une photo, puis choisissez un prénom.</span>
+    </div>
+    <div class="grid">
+      ${ORDER.map((bi, p) => `
+        <button class="tile stripes" data-p="${p}" aria-label="Photo ${p + 1}">
+          <span class="photo" style="background-image:${bg(bi)}"></span>
+          <span class="num">${p + 1}</span>
+          <span class="tag" hidden></span>
+        </button>`).join('')}
+    </div>
+    <div class="dock"><div><button class="btn-main" id="submit"></button></div></div>
+  </div>`;
+  app.querySelectorAll('.tile').forEach(t => { t.onclick = () => openSheet(+t.dataset.p); });
+  app.querySelector('#submit').onclick = openConfirm;
+  updateGame();
+}
+
+function updateGame() {
+  const done = Object.keys(S.assign).length;
+  const missing = TOTAL - done;
+  app.querySelector('#cnt').textContent = done;
+  app.querySelector('#fill').style.width = (done / TOTAL * 100) + '%';
+  app.querySelectorAll('.tile').forEach(t => {
+    const p = +t.dataset.p, tag = t.querySelector('.tag');
+    const has = S.assign[p] !== undefined;
+    tag.hidden = !has;
+    tag.textContent = has ? BEBES[S.assign[p]].prenom : '';
+    t.classList.toggle('on', active === p);
+  });
+  const btn = app.querySelector('#submit');
+  btn.textContent = missing ? `Valider (${missing} sans prénom)` : 'Valider mes réponses';
+  btn.classList.toggle('ready', !missing);
+}
+
+function renderDone() {
+  const [vt, vx] = verdict(S.score);
+  app.innerHTML = `
+  <div class="done">
+    <span class="caps">Résultat de ${esc(S.player)}</span>
+    <div class="done-mid">
+      <div class="scorecard">
+        <span class="sticker">Votre score</span>
+        <span class="serif big">${S.score}</span>
+        <span class="serif of">/${TOTAL}</span>
+      </div>
+      <h2 class="serif">${vt}</h2>
+      <p class="lead">${vx}</p>
+    </div>
+    <div class="foot"><span id="foot"></span><div class="dot"></div></div>
+  </div>`;
+  updateFoot();
+}
+
+function updateFoot() {
+  const el = document.getElementById('foot');
+  if (el) el.textContent = S.sent ? "Levez les yeux vers l'écran pour voir le classement." : "Envoi de votre score vers l'écran…";
+}
+
+function verdict(s) {
+  const r = s / TOTAL;
+  if (r === 1) return ['Sans faute. Suspect.', 'Soit vous avez un don, soit vous avez fouillé les albums de famille de tout le monde. On ne veut pas savoir.'];
+  if (r >= .7) return ['Physionomiste de haut vol.', 'Vous regardez vraiment vos amis en soirée. Ou vous vous ennuyez beaucoup.'];
+  if (r >= .4) return ['Honnête, sans plus.', 'Vous reconnaissez certains nez. Pour le reste, tous les bébés se ressemblent, on vous comprend.'];
+  if (r > 0) return ['Il y a eu du hasard.', 'Beaucoup de hasard. Vos amis vous remercient de ne pas les avoir reconnus.'];
+  return ['Zéro. Pile zéro.', 'Statistiquement, c’est presque un exploit. Bravo, d’une certaine manière.'];
+}
+
+// ── Choix du prénom (bottom sheet) ─────────────────────
+function closeLayer() {
+  layer.innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+function openSheet(p) {
+  active = p;
+  const byName = {};
+  Object.entries(S.assign).forEach(([pos, n]) => { byName[n] = +pos; });
+  const has = S.assign[p] !== undefined;
+  layer.innerHTML = `
+  <div class="sheet-wrap">
+    <div class="veil" data-close></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="Choisir un prénom">
+      <div class="sheet-head">
+        <div class="thumb stripes"><span class="photo" style="background-image:${bg(ORDER[p])}"></span></div>
+        <div class="sheet-title">
+          <span class="caps">Photo n°${p + 1}</span>
+          <span class="serif">C'est qui, ce petit être&nbsp;?</span>
+        </div>
+        <button class="close" data-close aria-label="Fermer">×</button>
+      </div>
+      <div class="opts">
+        ${SORTED.map(({ n, i }) => {
+          const on = byName[i];
+          const cur = on === p, used = on !== undefined && !cur;
+          return `<button class="opt${cur ? ' cur' : used ? ' used' : ''}" data-n="${i}">
+            <b>${esc(n)}</b>${on !== undefined ? `<small>${cur ? 'Choix actuel' : 'Déjà sur la photo ' + (on + 1)}</small>` : ''}
+          </button>`;
+        }).join('')}
+        ${has ? '<button class="unset" data-unset>Retirer le prénom</button>' : ''}
+      </div>
+    </div>
+  </div>`;
+  document.body.style.overflow = 'hidden';
+  layer.querySelectorAll('[data-close]').forEach(el => { el.onclick = hideSheet; });
+  layer.querySelectorAll('.opt').forEach(el => {
+    el.onclick = () => {
+      const ni = +el.dataset.n;
+      const a = { ...S.assign };
+      if (byName[ni] !== undefined) delete a[byName[ni]];
+      a[p] = ni;
+      set({ assign: a });
+      hideSheet();
+    };
+  });
+  const unset = layer.querySelector('[data-unset]');
+  if (unset) unset.onclick = () => {
+    const a = { ...S.assign };
+    delete a[p];
+    set({ assign: a });
+    hideSheet();
+  };
+  updateGame();
+}
+
+function hideSheet() {
+  active = null;
+  closeLayer();
+  updateGame();
+}
+
+// ── Confirmation & envoi ───────────────────────────────
+function openConfirm() {
+  const missing = TOTAL - Object.keys(S.assign).length;
+  const title = missing ? `Il reste ${missing} bébé${missing > 1 ? 's' : ''} anonyme${missing > 1 ? 's' : ''}.` : 'Sûr de vous ?';
+  const text = missing ? 'Ils compteront comme faux. Vous pouvez encore revenir en arrière.' : 'Une fois validé, impossible de changer. Pas de seconde chance, pas de recours.';
+  layer.innerHTML = `
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="card">
+      <span class="serif">${title}</span>
+      <p>${text}</p>
+      <div class="card-btns">
+        <button class="b-back" id="back">Revoir</button>
+        <button class="b-ok" id="ok">Valider</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.style.overflow = 'hidden';
+  layer.querySelector('#back').onclick = closeLayer;
+  layer.querySelector('#ok').onclick = submit;
+}
+
+function submit() {
+  const score = Object.entries(S.assign).filter(([p, n]) => ORDER[+p] === n).length;
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  set({ screen: 'done', score, entry: { id, name: S.player.trim(), score, total: TOTAL }, sent: false });
+  closeLayer();
+  render();
+  send();
+}
+
+// Réessaie jusqu'à ce que le score soit bien parti (wifi capricieux en soirée…).
+let sending = false;
+async function send(delay = 2000) {
+  if (sending || S.sent || !S.entry) return;
+  sending = true;
+  try {
+    await publishScore(S.entry);
+    set({ sent: true });
+    updateFoot();
+  } catch (e) {
+    setTimeout(() => send(Math.min(delay * 1.5, 15000)), delay);
+  } finally {
+    sending = false;
+  }
+}
+
+render();
+if (S.screen === 'done') send();
+</script>
+</body>
+</html>
