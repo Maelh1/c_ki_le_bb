@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0F0E0C">
-<title>Qui était ce bébé ?</title>
+<title>C'est qui ce bebew ?</title>
 <meta name="description" content="Le jeu de la crémaillère : retrouvez qui se cache derrière chaque photo de bébé.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,18 +17,16 @@
 
 /* Accueil */
 .home { flex: 1; display: flex; flex-direction: column; gap: 24px; padding: 24px 20px calc(28px + env(safe-area-inset-bottom)); overflow: hidden; }
-.home .title { font-size: clamp(46px, 14vw, 66px); margin-left: -3px; }
-.negs { margin: 0 -20px; overflow: hidden; }
-.negs .strip { display: flex; gap: 10px; padding: 16px 10px; width: max-content; animation: marq 70s linear infinite; }
-.negs .fr { width: 66px; aspect-ratio: 3 / 4; background: #2A2620 center / cover no-repeat; filter: invert(1) contrast(.9) brightness(.92); }
+.home .title { font-size: clamp(36px, 11.2vw, 60px); margin-left: -3px; }
+.bandeau { margin: 0 -20px; overflow: hidden; }
+.bandeau .strip { display: flex; gap: 10px; padding: 16px 10px; width: max-content; animation: marq 70s linear infinite; }
+.bandeau .fr { width: 66px; aspect-ratio: 3 / 4; background: #2A2620 center / cover no-repeat; }
 .lead { margin: 0; font-size: 17px; line-height: 1.5; color: var(--soft); max-width: 34ch; }
-.label { align-self: flex-start; font-size: 25px; padding: 6px 16px 4px; --t: -3deg; }
 .form { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
 .form label { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .form input { font: inherit; font-size: 20px; padding: 15px 18px; border: 0; border-radius: 3px; background: var(--print); color: var(--ink); outline: none; width: 100%; }
 .form input::placeholder { color: #8A8478; }
 .form input:focus { box-shadow: 0 0 0 3px var(--glow); }
-.note { margin: 2px 0 0; font-size: 13px; color: var(--muted); text-align: center; }
 
 /* Planche */
 .game { display: flex; flex-direction: column; flex: 1; }
@@ -148,19 +146,17 @@ function render() {
 }
 
 function renderHome() {
-  const negs = ORDER.map(bi => `<span class="fr" style="background-image:${bg(bi)}"></span>`).join('');
+  const vues = ORDER.map(bi => `<span class="fr" style="background-image:${bg(bi)}"></span>`).join('');
   app.innerHTML = `
   <div class="home">
-    <div class="meta"><span>Crémaillère</span><span>${TOTAL} poses</span></div>
-    <h1 class="title">Qui était<br><em>ce bébé</em>&nbsp;?</h1>
-    <div class="negs" aria-hidden="true"><div class="strip">${negs}${negs}</div></div>
-    <p class="lead">Vos amis ont un jour eu des joues rebondies et zéro responsabilité. Les tirages sont revenus du labo, mais personne n'a noté les prénoms.</p>
-    <span class="tape hand label">Aucune pitié</span>
+    <div class="meta"><span>Crémaillère Izel et Maël</span></div>
+    <h1 class="title">C'est qui<br><em>ce&nbsp;bebew</em>&nbsp;?</h1>
+    <div class="bandeau" aria-hidden="true"><div class="strip">${vues}${vues}</div></div>
+    <p class="lead">Vos amis ont un jour eu des joues rebondies et zéro responsabilité. <span style="white-space:nowrap">Saurez-vous</span> les reconnaitre&nbsp;?</p>
     <form class="form" id="f">
       <label for="name">Votre prénom</label>
-      <input id="name" autocomplete="given-name" maxlength="40" placeholder="Ex. Camille R.">
+      <input id="name" autocomplete="given-name" maxlength="40" placeholder="Ex. Édouard">
       <button class="btn" id="go" disabled>Commencer</button>
-      <p class="note">Pas de chrono. Une seule partie. Aucune pitié.</p>
     </form>
   </div>`;
   const input = app.querySelector('#name'), go = app.querySelector('#go');
@@ -183,7 +179,7 @@ function renderGame() {
   <div class="game">
     <header class="ghead">
       <div class="meta"><span>Planche de ${esc(S.player)}</span><span>${TOTAL} poses</span></div>
-      <h1 class="title">Qui était<br><em>ce bébé</em>&nbsp;?</h1>
+      <h1 class="title">C'est qui<br><em>ce&nbsp;bebew</em>&nbsp;?</h1>
     </header>
     <div class="bar">
       <div class="strip mini" id="mini" aria-hidden="true">${'<i></i>'.repeat(TOTAL)}</div>
