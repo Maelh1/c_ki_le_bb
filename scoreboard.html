@@ -3,104 +3,115 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Classement – Qui était ce bébé ?</title>
+<title>Classement, Qui était ce bébé ?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="theme.css">
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <style>
-html,body{margin:0;background:#FBFAF6;color:#141413}
-*{box-sizing:border-box}
-@keyframes bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-8px) rotate(-3deg)}}
-@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.serif{font-family:'Instrument Serif',serif;font-weight:400}
-.caps{font-size:clamp(13px,.9vw,18px);letter-spacing:.14em;text-transform:uppercase;color:#6B6B66}
-.board{height:100vh;overflow:hidden;font-family:'Instrument Sans',Helvetica,sans-serif;display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,22vw);grid-template-rows:minmax(0,1fr) auto;background:#FBFAF6;color:#141413}
-.main{grid-column:1;grid-row:1;padding:3.5vh 3.5vw 2vh;display:flex;flex-direction:column;gap:2.4vh;min-width:0;min-height:0}
-.head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
-.head h1{margin:0;font-size:clamp(40px,4.6vw,92px);line-height:.9;letter-spacing:-.02em}
-.head em{color:#8F6F24}
-.live{display:flex;align-items:center;gap:10px;white-space:nowrap}
-.live i{width:10px;height:10px;border-radius:50%;background:#C9A24A}
-.toast{display:flex;align-items:center;gap:16px;background:#141413;color:#fff;padding:1.2vh 1.4vw;font-size:clamp(18px,1.4vw,28px);border-radius:999px}
-.toast .badge{background:#C9A24A;color:#141413;font-weight:700;padding:.2em .7em;border-radius:999px;font-size:.8em;letter-spacing:.06em;text-transform:uppercase}
-.toast strong{font-weight:700}
-.stage{display:flex;flex-direction:column;gap:2.4vh;min-height:0;flex:1}
-.empty{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px}
-.empty .serif{font-size:clamp(36px,3.6vw,72px);line-height:1}
-.empty span:last-child{font-size:clamp(16px,1.3vw,26px);color:#6B6B66}
+html, body { height: 100%; overflow: hidden; }
+/* La planche est composée en 1920×1080 puis mise à l'échelle de l'écran. */
+.board { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(var(--k, 1)); display: grid; grid-template-columns: minmax(0, 1fr) 470px; grid-template-rows: minmax(0, 1fr) auto; }
+main { padding: 40px 56px 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0; min-height: 0; }
+.head { display: flex; justify-content: space-between; align-items: flex-end; }
+h1 { margin: 0 0 0 -6px; font-stretch: 125%; font-weight: 800; font-size: 84px; line-height: .86; letter-spacing: -.035em; text-transform: uppercase; }
+h1 em { font-style: normal; color: var(--glow); }
+.live { display: flex; align-items: center; gap: 12px; padding-bottom: 8px; font-size: 18px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.live .rec { width: 14px; height: 14px; }
 
-.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:1.6vw;height:44vh;min-height:280px;flex:none}
-.col{display:flex;flex-direction:column;justify-content:flex-end;height:100%;gap:1.2vh;min-width:0}
-.who{display:flex;flex-direction:column;align-items:center;gap:.4vh;text-align:center;min-width:0}
-.who .serif{font-size:clamp(28px,2.8vw,56px);line-height:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.who .pts{font-size:clamp(16px,1.2vw,24px);font-weight:600;font-variant-numeric:tabular-nums}
-.pts span,.row .pts span{opacity:.45;font-weight:400}
-.c1 .who .serif{font-style:italic;font-size:clamp(36px,3.8vw,76px);color:#8F6F24;padding-right:.15em}
-.c1 .who .pts{font-size:clamp(18px,1.4vw,28px);font-weight:700}
-.step{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.6vh;text-align:center;border-radius:24px 24px 0 0;padding-top:2vh}
-.step .n{line-height:.8}
-.step .lbl{font-size:clamp(12px,.85vw,16px);letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:0 8px}
-.c1 .step{height:74%;background:#C9A24A;color:#111110;border-radius:28px 28px 0 0;padding:7vh 8px 0;position:relative}
-.c1 .step .n{font-size:clamp(110px,11vw,220px)}
-.c1 .step .lbl{font-size:clamp(12px,.9vw,17px);font-weight:700;padding:0}
-.c2 .step{height:56%;background:#141413;color:#fff}
-.c2 .step .n{font-size:clamp(80px,8vw,160px)}
-.c3 .step{height:42%;background:#ECE6D6;color:#141413}
-.c3 .step .n{font-size:clamp(70px,7vw,140px)}
-.c3 .step .lbl{color:#5E5846}
-.medal{position:absolute;top:2vh;left:0;right:0;display:flex;justify-content:center;pointer-events:none}
-.medal span{background:#fff;color:#141413;border:2px solid #141413;border-radius:999px;padding:.45em 1em;font-size:clamp(11px,.8vw,15px);font-weight:700;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;animation:bob 3s ease-in-out infinite}
+.toast-slot { height: 58px; }
+.toast { display: inline-flex; align-items: center; gap: 18px; height: 58px; background: var(--glow); color: var(--ink); padding: 0 22px 0 14px; font-size: 26px; transform: rotate(-.6deg); box-shadow: 0 10px 24px rgba(0, 0, 0, .5); animation: slide .4s cubic-bezier(.2, .8, .2, 1); }
+.toast b { font-stretch: 125%; font-weight: 800; text-transform: uppercase; font-size: 18px; letter-spacing: .02em; background: var(--ink); color: var(--glow); padding: 4px 10px; }
+@keyframes slide { from { opacity: 0; transform: translateX(-30px) rotate(-.6deg); } }
 
-.rest-head{display:flex;align-items:baseline;gap:16px;border-top:1px solid #DDD6C4;padding-top:1.6vh}
-.rest{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-flow:column;column-gap:1.4vw;row-gap:.8vh;align-content:start;min-height:0;overflow:hidden}
-.row{display:grid;grid-template-columns:2.2em minmax(0,1fr) auto;align-items:center;gap:.6em;padding:.7vh .9vw;border-radius:999px;font-size:clamp(16px,1.25vw,26px);background:#F1ECDF;color:#141413;transition:background 1.6s ease,color 1.6s ease}
-.row .rk{font-size:1.2em;line-height:1;color:#8F6F24;transition:color 1.6s ease}
-.row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row .pts{font-variant-numeric:tabular-nums;font-weight:600}
-.row.fresh{background:#C9A24A}
-.row.fresh .rk{color:#141413}
+.stage { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 18px; }
+.roll .edge { display: flex; padding: 0 0 6px; }
+.roll .edge span { flex: 1; padding-left: 14px; }
+.roll .strip { display: flex; gap: 16px; padding: 22px 16px; }
+.roll .strip::before, .roll .strip::after { background-size: 22px 12px; height: 12px; }
+.f { flex: 1; position: relative; min-width: 0; background: radial-gradient(130% 100% at 50% 40%, #2E271E, #14110D); display: flex; flex-direction: column; justify-content: flex-end; padding: 22px 26px; transition: box-shadow 1.6s; }
+.f.fresh { box-shadow: 0 0 0 3px var(--glow), 0 0 40px rgba(80, 175, 255, .45); transition: none; }
+.f.blank { background: #16130F; }
+.f .nm { font-stretch: 125%; font-weight: 800; text-transform: uppercase; letter-spacing: -.02em; line-height: .95; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.f .sc small { font-family: 'Archivo', sans-serif; color: var(--muted); text-shadow: none; letter-spacing: 0; font-weight: 600; }
+.f .rk { position: absolute; top: 14px; left: 18px; }
+.top3 .f { height: 270px; }
+.top3 .nm { font-size: 64px; margin-bottom: 14px; }
+.top3 .sc { font-size: 76px; }
+.top3 .sc small { font-size: 28px; margin-left: 6px; }
+.top3 .f.blank > span:last-child { font-size: 22px; color: #5E574B; font-weight: 600; }
+.g1 { left: -22px; top: 50%; width: calc(100% + 44px); aspect-ratio: 2 / 1; transform: translateY(-50%); --sw: 2.2; --delay: .4s; }
+.n1 { right: 24px; top: 14px; font-size: 46px; }
+.tick { right: 26px; top: 22px; width: 60px; height: 46px; --delay: .8s; }
 
-.side{grid-column:2;grid-row:1 / span 2;background:#141413;color:#fff;padding:3.5vh 2vw;display:flex;flex-direction:column;gap:2vh;min-height:0;overflow:hidden}
-.side .caps{color:#B4B4AC}
-.count{font-size:clamp(90px,9vw,190px);line-height:.8;letter-spacing:-.03em}
-.count-lbl{font-size:clamp(16px,1.15vw,24px);color:#D6D6CE;text-wrap:pretty}
-.join{display:flex;flex-direction:column;gap:1.4vh}
-.join .serif{font-size:clamp(30px,2.5vw,52px);line-height:1}
-.join em{color:#C9A24A}
-.qr{background:#fff;padding:1vw;border:1.5px solid #C9A24A;border-radius:20px;aspect-ratio:1;width:100%;max-width:min(320px,34vh)}
-.qr svg,.qr img{display:block;width:100%;height:100%}
-.url{font-size:clamp(13px,.9vw,18px);color:#B4B4AC;word-break:break-all}
+.rests { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+.rest .strip { gap: 12px; padding: 18px 14px; }
+.rest .strip::before, .rest .strip::after { height: 10px; background-size: 18px 10px; }
+.rest .f { height: var(--fh, 120px); padding: 12px 18px; gap: 4px; }
+.rest .nm { font-size: var(--fs, 28px); font-stretch: 110%; }
+.rest .sc { font-size: calc(var(--fs, 28px) * 1.15); }
+.rest .sc small { font-size: .5em; margin-left: 3px; }
+.rest.compact .f { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; padding: 0 16px 0 52px; }
+.rest.compact .rk { top: 50%; transform: translateY(-50%); left: 16px; font-size: 16px; }
+.rest.compact .rk .v { display: none; }
+.rest.compact .sc { flex: none; }
+.gx { left: 10%; top: 50%; width: 80%; aspect-ratio: 2 / 1; max-height: 100%; transform: translateY(-50%); --sw: 2.6; --delay: 1.2s; }
+/* Au-delà de 10 joueurs hors podium : une seule bande, liste en colonnes */
+.list .strip { display: grid; grid-auto-flow: column; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); grid-template-rows: repeat(var(--rows), minmax(0, 1fr)); gap: 0 34px; padding: 22px 28px; height: 100%; }
+.list { flex: 1; min-height: 0; }
+.li { position: relative; display: flex; align-items: center; gap: .6em; font-size: var(--ls, 24px); min-width: 0; border-bottom: 1px dotted rgba(242, 238, 229, .16); padding: 0 .3em; transition: background 1.6s; }
+.li.fresh { background: rgba(143, 211, 255, .22); transition: none; }
+.li .rk { width: 2.2em; flex: none; font-size: .62em; }
+.li .nm { flex: 1; min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.li .sc { flex: none; font-size: 1.05em; }
+.li .sc small { font-family: 'Archivo', sans-serif; font-size: .5em; color: var(--muted); text-shadow: none; letter-spacing: 0; margin-left: 2px; }
+.gl { left: 2.2em; right: 0; top: 50%; width: calc(100% - 2.2em); height: 40px; transform: translateY(-50%); --sw: 7; --delay: 1.2s; }
+.nl { right: 3.6em; top: -.55em; font-size: 1.15em; }
+.nx { right: 14px; top: -4px; font-size: 30px; }
 
-.ticker{grid-column:1;grid-row:2;background:#C9A24A;color:#111110;overflow:hidden;white-space:nowrap;padding:1.2vh 0;font-size:clamp(16px,1.2vw,24px);font-weight:600;min-width:0;min-height:calc(2.4vh + 1.3em)}
-.ticker > div{display:inline-flex;animation:marq 28s linear infinite}
-.ticker span{padding-left:2vw}
+.empty { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding-bottom: 40px; }
+.empty strong { font-stretch: 125%; font-weight: 800; font-size: 64px; line-height: .95; letter-spacing: -.03em; text-transform: uppercase; }
+.empty span { font-size: 26px; color: var(--muted); }
+
+aside { grid-row: 1 / span 2; grid-column: 2; display: flex; flex-direction: column; gap: 22px; padding: 44px 44px 40px 0; }
+.counter { display: flex; flex-direction: column; gap: 8px; }
+.counter .seg { font-size: 150px; line-height: .9; }
+.counter span:last-child { font-size: 22px; color: var(--muted); }
+.env { margin-top: auto; background: var(--print); color: var(--ink); padding: 0 0 24px; transform: rotate(1.2deg); box-shadow: 0 24px 48px rgba(0, 0, 0, .6); }
+.env .band { background: var(--glow); padding: 14px 26px; display: flex; justify-content: space-between; font-stretch: 125%; font-weight: 800; font-size: 18px; letter-spacing: .04em; text-transform: uppercase; }
+.env h2 { margin: 22px 26px 18px; font-stretch: 125%; font-weight: 800; font-size: 42px; line-height: .92; letter-spacing: -.03em; text-transform: uppercase; }
+.qr { margin: 0 26px; padding: 14px; border: 2px dashed rgba(21, 18, 14, .35); background: #fff; }
+.qr svg, .qr img { display: block; width: 100%; height: auto; }
+.env p { margin: 14px 26px 0; display: flex; justify-content: space-between; gap: 10px; font-size: 17px; color: #4B453C; }
+.env .url { word-break: break-all; }
+
+.ticker { grid-column: 1; overflow: hidden; white-space: nowrap; background: var(--base); padding: 16px 0 14px; border-top: 1px solid #2B2620; }
+.ticker > div { display: inline-block; animation: marq 45s linear infinite; font-size: 20px; }
 </style>
 </head>
 <body>
-<div class="board">
-  <div class="main">
+<div class="board" id="board">
+  <main>
     <div class="head">
-      <h1 class="serif">Qui était <em>ce bébé</em>&nbsp;?</h1>
-      <div class="live caps"><i></i><span>En direct</span></div>
+      <h1>Qui était<br><em>ce bébé</em>&nbsp;?</h1>
+      <div class="live"><span class="rec"></span>En direct</div>
     </div>
-    <div id="toast"></div>
+    <div class="toast-slot" id="toast" aria-live="polite"></div>
     <div class="stage" id="stage"></div>
-  </div>
+  </main>
 
-  <div class="side">
-    <span class="caps">Participants</span>
-    <span class="serif count" id="count">0</span>
-    <span class="count-lbl" id="countLbl"></span>
-    <div style="flex:1"></div>
-    <div class="join">
-      <span class="serif">À vous de <em>jouer</em></span>
+  <aside>
+    <div class="counter"><span class="seg" id="count">00</span><span id="countLbl"></span></div>
+    <div class="env">
+      <div class="band"><span>Dépôt des films</span><span id="day"></span></div>
+      <h2>Scannez<br>pour jouer</h2>
       <div class="qr" id="qr" role="img" aria-label="QR code du jeu"></div>
-      <span class="url" id="url"></span>
+      <p><span class="url" id="url"></span><span>Tirage en 1 minute</span></p>
     </div>
-  </div>
+  </aside>
 
-  <div class="ticker" id="ticker"></div>
+  <div class="ticker edge" aria-hidden="true"><div id="ticker"></div></div>
 </div>
 
 <script src="config.js"></script>
@@ -111,7 +122,8 @@ const params = new URLSearchParams(location.search);
 const STORE = 'bebes_board_' + window.CANAL;
 const CUTOFF = 'bebes_cutoff_' + window.CANAL;
 const DEMO = [['Camille',19],['Thomas',14],['Julie',22],['Antoine',9],['Sarah',17],['Maxime',11],['Chloé',17],['Romain',6],['Laura',13],['Hugo',20],['Kevin',3],['Marion',15]];
-const QUIPS = ['Respect.', 'Pas mal du tout.', 'On a vu pire.', 'Aïe.'];
+const CIRCLE = 'M30 18 C 80 2, 168 4, 190 34 C 206 62, 170 94, 104 96 C 40 98, 4 80, 8 52 C 12 26, 54 10, 120 8';
+const pad = n => String(n).padStart(2, '0');
 
 const ls = {
   get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } },
@@ -144,20 +156,29 @@ function add(msg, announce) {
     toastTimer = setTimeout(() => {
       toast = null;
       renderToast();
-      const row = document.querySelector('.row.fresh');
-      if (row) row.classList.remove('fresh');
+      const f = document.querySelector('.f.fresh, .li.fresh');
+      if (f) f.classList.remove('fresh');
       freshId = null;
     }, 6000);
   }
   return true;
 }
 
+// ── Mise à l'échelle de l'écran ────────────────────────
+const board = document.getElementById('board');
+const fit = () => board.style.setProperty('--k', Math.min(innerWidth / 1920, innerHeight / 1080));
+fit();
+addEventListener('resize', fit);
+
 // ── Rendu ──────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 
 function ranked() {
   let list = [...scores.values()];
-  if (demo && !list.length) list = DEMO.map(([name, score], i) => ({ id: 'd' + i, name, score, total: 25, ts: i }));
+  if (demo && !list.length) {
+    const total = window.BEBES.length;   // les scores de DEMO sont sur 25
+    list = DEMO.map(([name, score], i) => ({ id: 'd' + i, name, score: Math.round(score * total / 25), total, ts: i }));
+  }
   const sorted = list.sort((a, b) => b.score - a.score || a.ts - b.ts);
   let prev = null, rank = 0;
   return sorted.map((s, i) => {
@@ -166,14 +187,71 @@ function ranked() {
   });
 }
 
-const pts = s => `${s.score}<span>/${s.total}</span>`;
+const sc = s => `<span class="seg sc">${pad(s.score)}<small>/${s.total}</small></span>`;
+const fr = s => `class="f${s.id === freshId ? ' fresh' : ''}" data-id="${esc(s.id)}"`;
 
-function podiumCol(cls, s, n, label, extra = '') {
-  if (!s) return `<div class="col ${cls}"></div>`;
-  return `<div class="col ${cls}">
-    <div class="who"><span class="serif">${esc(s.name)}</span><span class="pts">${pts(s)}</span></div>
-    <div class="step">${extra}<span class="serif n">${n}</span><span class="lbl">${label}</span></div>
-  </div>`;
+// Les traits au crayon ne se redessinent que si la personne marquée change.
+const marked = { first: null, last: null };
+function grease(cls, d, key, id) {
+  const drawn = marked[key] === id ? ' drawn' : '';
+  marked[key] = id;
+  return `<svg class="grease ${cls}${drawn}" viewBox="0 0 200 100" aria-hidden="true"><path pathLength="1" d="${d}"/></svg>`;
+}
+
+function podium(r) {
+  const cells = [0, 1, 2].map(i => {
+    const s = r[i];
+    if (!s) return `<div class="f blank"><span class="edge rk">Vue ${i + 1}</span><span>Vue libre</span></div>`;
+    const mark = i === 0
+      ? grease('g1', CIRCLE, 'first', s.id) + '<span class="scrawl hand n1">À tirer&nbsp;!</span>'
+      : '<svg class="grease tick drawn" viewBox="0 0 60 46" aria-hidden="true"><path pathLength="1" d="M6 24 L 22 40 L 56 4"/></svg>';
+    return `<div ${fr(s)}><span class="edge rk">Vue ${s.rank}</span>${mark}<span class="nm">${esc(s.name)}</span>${sc(s)}</div>`;
+  });
+  return `<section class="roll top3">
+    <div class="edge" aria-hidden="true">${[1, 2, 3].map(i => `<span>▸ ${i}&emsp;▸ ${i}A</span>`).join('')}</div>
+    <div class="strip">${cells.join('')}</div>
+  </section>`;
+}
+
+function rest(r) {
+  const list = r.slice(3);
+  if (!list.length) return '';
+  const last = r[r.length - 1];
+  if (list.length > 10) {
+    const c = list.length > 36 ? 4 : 3;
+    return `<section class="roll list" style="--cols:${c};--rows:${Math.ceil(list.length / c)}"><div class="strip">${list.map(s => `
+      <div class="li${s.id === freshId ? ' fresh' : ''}" data-id="${esc(s.id)}"><span class="edge rk">${s.rank}</span><span class="nm">${esc(s.name)}</span>${sc(s)}
+        ${s === last ? grease('gl', 'M2 54 C 60 46, 140 52, 198 44', 'last', s.id).replace('viewBox="0 0 200 100"', 'viewBox="0 0 200 100" preserveAspectRatio="none"') + '<span class="scrawl hand nl">Voilé</span>' : ''}
+      </div>`).join('')}</div></section>`;
+  }
+  const cols = 5;
+  const rows = [];
+  for (let i = 0; i < list.length; i += cols) rows.push(list.slice(i, i + cols));
+  return rows.map(row => `
+    <section class="roll rest"><div class="strip">${row.map(s => `
+      <div ${fr(s)}><span class="edge rk"><span class="v">Vue&nbsp;</span>${s.rank}</span><span class="nm">${esc(s.name)}</span>${sc(s)}
+        ${s === last ? grease('gx', 'M14 10 L 186 92 M 182 8 L 18 90', 'last', s.id) + '<span class="scrawl hand nx">Voilé</span>' : ''}
+      </div>`).join('')}${'<div class="f blank"></div>'.repeat(cols - row.length)}</div></section>`).join('');
+}
+
+// Ajuste la hauteur des cadres du bas pour que toutes les bandes tiennent.
+function fitRest() {
+  const box = $('rests');
+  if (!box) return;
+  const list = box.querySelector('.list');
+  if (list) {
+    const rows = +list.style.getPropertyValue('--rows');
+    const rowH = (box.clientHeight - 44) / rows;
+    box.style.setProperty('--ls', Math.round(Math.max(15, Math.min(28, rowH * .6))) + 'px');
+    return;
+  }
+  const strips = box.querySelectorAll('.rest');
+  if (!strips.length) return;
+  const per = (box.clientHeight - (strips.length - 1) * 12) / strips.length - 36;
+  const fh = Math.max(40, Math.min(120, Math.floor(per)));
+  box.style.setProperty('--fh', fh + 'px');
+  box.style.setProperty('--fs', Math.round(Math.max(18, Math.min(28, fh * .26))) + 'px');
+  strips.forEach(s => s.classList.toggle('compact', fh < 96));
 }
 
 function render() {
@@ -181,53 +259,43 @@ function render() {
   const n = r.length;
 
   if (!n) {
-    $('stage').innerHTML = `<div class="empty">
-      <span class="serif">Personne n'a encore osé.</span>
-      <span>Scannez le QR code pour être le premier à se ridiculiser.</span>
-    </div>`;
+    marked.first = marked.last = null;
+    $('stage').innerHTML = `${podium(r)}
+      <div class="empty"><strong>Pellicule vierge.</strong><span>Personne n'a encore osé. Scannez le QR code pour être le premier à se ridiculiser.</span></div>`;
   } else {
-    const rest = r.slice(3);
-    $('stage').innerHTML = `
-      <div class="podium">
-        ${podiumCol('c2', r[1], 2, 'Presque voyant·e')}
-        ${podiumCol('c1', r[0], 1, 'Connaît tout le monde', '<div class="medal"><span>Médium certifié</span></div>')}
-        ${podiumCol('c3', r[2], 3, 'Bon instinct')}
-      </div>
-      ${rest.length ? `
-      <div class="rest-head"><span class="caps">Le reste de la troupe</span></div>
-      <div class="rest" style="grid-template-rows:repeat(${Math.max(3, Math.ceil(rest.length / 3))},auto)">
-        ${rest.map(s => `<div class="row${s.id === freshId ? ' fresh' : ''}">
-          <span class="serif rk">${s.rank}</span><span class="nm">${esc(s.name)}</span><span class="pts">${pts(s)}</span>
-        </div>`).join('')}
-      </div>` : ''}`;
+    if (n <= 3) marked.last = null;
+    $('stage').innerHTML = `${podium(r)}<div class="rests" id="rests">${rest(r)}</div>`;
+    fitRest();
   }
 
-  $('count').textContent = n;
-  $('countLbl').textContent = n === 0 ? 'Aucun courageux pour l’instant.' : n === 1 ? 'personne a déjà tenté sa chance.' : 'personnes ont déjà tenté leur chance.';
+  $('count').textContent = pad(n);
+  $('countLbl').textContent = n === 0 ? 'Aucun film développé pour l’instant' : n === 1 ? 'film développé ce soir' : 'films développés ce soir';
 
   const last = n > 3 ? r[n - 1] : null;
-  const tick = last ? `Lanterne rouge : ${last.name} (${last.score}/${last.total}), qui n'a visiblement jamais vu un bébé de sa vie   ✦   Vous pouvez encore faire pire   ✦   ` : '';
+  const tick = (last ? `Lanterne rouge : ${last.name}, ${last.score}/${last.total}. Voile total.   ▸ 22   ▸ 22A   Vous pouvez encore faire pire   ▸ 23   ▸ 23A   `
+                     : `Pellicule 400 ISO   ▸ 1   ▸ 1A   Scannez le QR code pour jouer   ▸ 2   ▸ 2A   `);
   const ticker = $('ticker');
   if (ticker.dataset.text !== tick) {   // ne pas relancer le défilement si rien n'a changé
     ticker.dataset.text = tick;
-    const t = esc(tick.repeat(3));
-    ticker.innerHTML = last ? `<div><span>${t}</span><span>${t}</span></div>` : '';
+    const t = esc(tick.repeat(4)).replace(/ {3}/g, '&emsp;');
+    ticker.innerHTML = `<span>${t}</span><span>${t}</span>`;
   }
   renderToast();
 }
 
+const QUIPS = ['Net, très net.', 'Net, ou presque.', 'Un peu flou.', 'Voilé.'];
 function renderToast() {
   const t = toast;
   if (!t) { $('toast').innerHTML = ''; return; }
   const r = t.score / t.total;
   const quip = QUIPS[r >= .8 ? 0 : r >= .55 ? 1 : r >= .3 ? 2 : 3];
-  $('toast').innerHTML = `<div class="toast"><span class="badge">Nouveau</span>
-    <span><strong>${esc(t.name)}</strong> termine avec ${t.score}/${t.total}. ${quip}</span></div>`;
+  $('toast').innerHTML = `<div class="toast"><b>Nouveau tirage</b><span>${esc(t.name)} développe un ${t.score}/${t.total}. ${quip}</span></div>`;
 }
 
 // ── QR code vers le jeu ────────────────────────────────
 const gameUrl = location.origin + location.pathname.replace(/[^/]*$/, '');
 $('url').textContent = gameUrl.replace(/^https?:\/\//, '');
+$('day').textContent = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
 try {
   const qr = qrcode(0, 'M');
   qr.addData(gameUrl);

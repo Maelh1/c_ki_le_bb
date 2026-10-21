@@ -7,6 +7,7 @@ et le classement s'affiche en direct sur un écran.
 - `scoreboard.html` : le classement (sur l'ordi / la télé), avec le QR code pour rejoindre
 - `config.js` : **le seul fichier à modifier** (prénoms, photos)
 - `photos/` : les photos de bébés
+- `theme.css` : l'habillage commun aux deux pages (direction artistique décrite dans `DESIGN.md`)
 
 Pas de serveur, pas de compte : le site est hébergé par GitHub Pages, et les scores passent
 par [ntfy.sh](https://ntfy.sh), un service gratuit de messages.

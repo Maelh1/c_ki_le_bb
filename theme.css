@@ -1,0 +1,74 @@
+/* Habillage commun au jeu et au classement : la planche contact.
+   Chaque bébé est un tirage des années 90, le classement est la planche
+   où l'on entoure au crayon gras les vues à tirer. Rien à modifier ici. */
+@font-face {
+  font-family: 'DSEG7';
+  src: url('https://cdn.jsdelivr.net/npm/dseg@0.46.0/fonts/DSEG7-Classic/DSEG7Classic-Bold.woff2') format('woff2');
+  font-display: swap;
+}
+:root {
+  --film: #0F0E0C;    /* fond : la table du labo */
+  --base: #1D1A16;    /* bande de pellicule */
+  --cell: #2A2620;    /* case, bouton secondaire */
+  --print: #F2EEE5;   /* papier photo */
+  --ink: #15120E;
+  --soft: #D8D1C4;    /* texte courant sur fond sombre */
+  --muted: #A39B8D;   /* texte secondaire */
+  --edge: #BFC6CC;    /* marquages de bord de pellicule */
+  --glow: #8FD3FF;    /* afficheur bleu, façon magnétoscope */
+  --grease: #E3342F;  /* crayon gras rouge */
+  --tape: #E4D6B4;    /* ruban de masquage */
+  --hole: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='10'%3E%3Crect x='3' y='1' width='10' height='8' rx='2' fill='%23E9E2D3'/%3E%3C/svg%3E");
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--film); color: var(--print); }
+body { font-family: 'Archivo', Helvetica, sans-serif; -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums; -webkit-tap-highlight-color: transparent; }
+body::after { content: ''; position: fixed; inset: 0; background: var(--grain); opacity: .07; pointer-events: none; z-index: 100; }
+button { font: inherit; color: inherit; border: 0; background: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+::selection { background: var(--glow); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--glow); outline-offset: 3px; }
+
+.wide { font-stretch: 125%; }
+.seg { font-family: 'DSEG7', 'Archivo', monospace; font-weight: 700; color: var(--glow); letter-spacing: .04em; text-shadow: 0 0 2px rgba(205, 238, 255, .9), 0 0 12px rgba(80, 175, 255, .6); }
+.hand { font-family: 'Caveat', cursive; font-weight: 700; }
+.meta { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.edge { font-stretch: 72%; font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--edge); }
+
+/* Bande de pellicule : perforations en haut et en bas */
+.strip { position: relative; background: var(--base); padding: 16px 0; }
+.strip::before, .strip::after { content: ''; position: absolute; left: 0; right: 0; height: 10px; background: var(--hole) repeat-x 0 0 / 16px 10px; opacity: .9; pointer-events: none; }
+.strip::before { top: 3px; }
+.strip::after { bottom: 3px; }
+
+/* Tirage */
+.print { background: var(--print); padding: 4px; box-shadow: 0 10px 20px rgba(0, 0, 0, .55); transform: rotate(var(--r, 0deg)); }
+.print .img { position: relative; aspect-ratio: 3 / 4; background: #2A2620 center / cover no-repeat; }
+
+/* Ruban de masquage, écrit au feutre */
+.tape { background: var(--tape); color: var(--ink); line-height: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transform: rotate(var(--t, -2deg)); box-shadow: 0 2px 4px rgba(0, 0, 0, .35); clip-path: polygon(0 8%, 3% 0, 6% 10%, 94% 4%, 97% 0, 100% 12%, 100% 90%, 97% 100%, 93% 88%, 5% 96%, 2% 100%, 0 86%); }
+
+/* Bouton principal */
+.btn { width: 100%; min-height: 58px; border-radius: 3px; background: var(--glow); color: var(--ink); display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 16px; font-stretch: 125%; font-weight: 800; font-size: 17px; letter-spacing: -.01em; text-transform: uppercase; }
+.btn small { font-stretch: 100%; font-weight: 500; font-size: 14px; letter-spacing: 0; text-transform: none; opacity: .8; }
+.btn:disabled { opacity: .35; cursor: default; }
+.btn:not(:disabled):active { transform: translateY(1px); }
+
+/* Traits de crayon gras qui se dessinent (pathLength="1" sur chaque path) */
+.grease { position: absolute; overflow: visible; pointer-events: none; z-index: 3; }
+.grease path { fill: none; stroke: var(--grease); stroke-width: var(--sw, 5); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.1s cubic-bezier(.6, 0, .2, 1) var(--delay, 0s) forwards; }
+.grease.drawn path { animation: none; stroke-dashoffset: 0; }
+.scrawl { position: absolute; z-index: 4; color: var(--grease); transform: rotate(-7deg); white-space: nowrap; }
+
+.rec { width: 10px; height: 10px; border-radius: 50%; background: var(--grease); box-shadow: 0 0 10px var(--grease); flex: none; }
+.rec.blink { animation: blink 1s steps(2, start) infinite; }
+
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes burn { 0% { opacity: 0; } 30% { opacity: 1; } 38% { opacity: .35; } 46%, 100% { opacity: 1; } }
+@keyframes develop { from { filter: brightness(0) contrast(1.4); } to { filter: none; } }
+@keyframes blink { to { visibility: hidden; } }
+@keyframes marq { to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
