@@ -66,6 +66,14 @@
 .score small { font-family: 'Archivo', sans-serif; font-size: 22px; font-weight: 600; color: var(--print); text-shadow: none; letter-spacing: 0; margin-left: 6px; }
 .frame .grease { left: -10px; top: 50%; width: calc(100% + 20px); aspect-ratio: 2 / 1; transform: translateY(-50%); --sw: 3; --delay: 1.9s; }
 .frame .scrawl { right: 40px; bottom: -66px; font-size: 32px; animation: burn .4s 2.8s both; }
+.frame .scrawl.long { right: 10px; font-size: 27px; }
+/* « Brillant », écrit au stylo à paillettes */
+.frame .scrawl.glitter { color: transparent; background: linear-gradient(110deg, #B8860B, #FFE58A 18%, #FFFBE6 26%, #D4A017 40%, #FFE58A 55%, #FFFFFF 61%, #C9971C 76%, #FFE58A); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 0 6px rgba(255, 214, 90, .6)); animation: burn .4s 2.8s both, shine 2.2s linear 3.2s infinite; overflow: visible; }
+.frame .scrawl.glitter::before, .frame .scrawl.glitter::after { content: '✦'; position: absolute; color: #FFF3B0; -webkit-text-fill-color: #FFF3B0; font-size: .5em; animation: twinkle 1.4s ease-in-out 3s infinite; }
+.frame .scrawl.glitter::before { left: -.5em; top: -.1em; }
+.frame .scrawl.glitter::after { right: -.6em; bottom: .1em; animation-delay: 3.7s; }
+@keyframes shine { to { background-position: -250% 0; } }
+@keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } }
 .say h2 { margin: 0 0 12px -1px; font-stretch: 125%; font-weight: 800; font-size: 34px; line-height: .95; letter-spacing: -.03em; text-transform: uppercase; text-wrap: balance; }
 .say p { margin: 0; font-size: 17px; line-height: 1.5; color: var(--soft); max-width: 34ch; }
 .foot { margin-top: 28px; padding-top: 14px; border-top: 1px solid rgba(242, 238, 229, .18); display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 15px; color: var(--muted); }
@@ -119,7 +127,11 @@ const pad = n => String(n).padStart(2, '0');
 const TILT = [-1.6, 1.1, -.7, 1.4, -1.2, .6];
 const tilt = p => TILT[p % TILT.length];
 const CIRCLE = 'M30 18 C 80 2, 168 4, 190 34 C 206 62, 170 94, 104 96 C 40 98, 4 80, 8 52 C 12 26, 54 10, 120 8';
-const CROSS = 'M40 14 L 160 88 M 156 10 L 44 90';
+const MARKS = {
+  circle: CIRCLE,
+  cross: 'M40 14 L 160 88 M 156 10 L 44 90',
+  claws: 'M58 10 C 76 38, 92 64, 110 92 M 92 6 C 110 34, 126 60, 142 88 M 126 4 C 144 32, 158 56, 174 84',
+};
 
 let S = { screen: 'home', player: '', assign: {}, score: 0, entry: null, sent: false, at: 0 };
 let active = null;
@@ -219,31 +231,52 @@ function updateGame() {
 }
 
 function renderDone() {
-  const [title, text, mark, word] = verdict(S.score);
+  const v = verdict(S.score);
   const at = S.at ? new Date(S.at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
   const s = S.score;
+  // Score secret : même les marquages de la pellicule (qui reprennent le score) sont masqués.
+  const edge = v.secret ? ['??A', '??', '??A', '??', '??A'] : [`${s ? s - 1 : 0}A`, s, `${s}A`, s + 1, `${s + 1}A`];
   app.innerHTML = `
   <div class="done">
     <div class="meta"><span>Tirage de ${esc(S.player)}</span><span>${at ? 'Développé à ' + at : ''}</span></div>
     <div class="neg" aria-hidden="true">
-      <div class="edge"><span>▸ ${s ? s - 1 : 0}A</span><span>▸ ${s}</span><span>▸ ${s}A</span><span>▸ ${s + 1}</span><span>▸ ${s + 1}A</span></div>
+      <div class="edge">${edge.map(e => `<span>▸ ${e}</span>`).join('')}</div>
       <div class="strip"><div class="row">
         <div class="frame ghost"></div>
         <div class="frame">
-          <span class="seg score">${pad(s)}<small>/${TOTAL}</small></span>
-          ${mark ? `<svg class="grease" viewBox="0 0 200 100"><path pathLength="1" d="${mark === 'circle' ? CIRCLE : CROSS}"/></svg>` : ''}
-          <span class="scrawl hand">${word}</span>
+          <span class="seg score">${v.secret ? '--' : `${pad(s)}<small>/${TOTAL}</small>`}</span>
+          <svg class="grease" viewBox="0 0 200 100"><path pathLength="1" d="${MARKS[v.mark]}"/></svg>
+          <span class="scrawl hand${v.glitter ? ' glitter' : ''}${v.word.length > 12 ? ' long' : ''}">${v.word}</span>
         </div>
         <div class="frame ghost"></div>
       </div></div>
     </div>
     <section class="say">
-      <h2>${title}</h2>
-      <p>Votre score : ${s} sur ${TOTAL}. ${text}</p>
+      <h2>${v.title}</h2>
+      <p>${v.secret ? '' : `Votre score : ${s} sur ${TOTAL}. `}${v.text}</p>
       <div class="foot" role="status"><span id="foot"></span><span class="rec" id="rec"></span></div>
     </section>
   </div>`;
   updateFoot();
+  if (v.secret) confettis();
+}
+
+// Confettis du Ballon d'Or, lancés quand le cercle se dessine.
+function confettis() {
+  const colors = ['#8FD3FF', '#E3342F', '#F2EEE5', '#E4D6B4', '#FFD45A'];
+  const go = () => {
+    const opts = { colors, disableForReducedMotion: true };
+    setTimeout(() => {
+      confetti({ ...opts, particleCount: 90, angle: 60, spread: 70, origin: { x: 0, y: .7 } });
+      confetti({ ...opts, particleCount: 90, angle: 120, spread: 70, origin: { x: 1, y: .7 } });
+    }, 1900);
+    setTimeout(() => confetti({ ...opts, particleCount: 140, spread: 110, startVelocity: 38, origin: { y: .35 } }), 2600);
+  };
+  if (window.confetti) return go();
+  const tag = document.createElement('script');
+  tag.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
+  tag.onload = go;
+  document.head.appendChild(tag);
 }
 
 function updateFoot() {
@@ -253,14 +286,15 @@ function updateFoot() {
   document.getElementById('rec').classList.toggle('blink', !S.sent);
 }
 
-// [titre, texte, marque au crayon gras, mot griffonné]
+// Paliers exprimés sur 20 (18, 14, 7), et toujours justes si on ajoute des photos.
+// secret : le score n'est pas affiché (gardé pour la révélation du gagnant).
 function verdict(s) {
-  const r = s / TOTAL;
-  if (r === 1) return ['Net. Trop net.', 'Soit vous avez un don, soit vous avez fouillé les albums de famille de tout le monde. On ne veut pas savoir.', 'circle', 'À tirer !'];
-  if (r >= .7) return ['Mise au point parfaite.', 'Vous reconnaissez vos amis même en 9×13 mat. Le labo est impressionné, et un peu inquiet.', 'circle', 'À tirer !'];
-  if (r >= .4) return ['Un peu flou sur les bords.', 'Vous reconnaissez certains nez. Pour le reste, tous les bébés se ressemblent, on vous comprend.', '', 'À revoir'];
-  if (r > 0) return ['Bougé.', 'Il y a eu du hasard. Beaucoup de hasard. Vos amis vous remercient de ne pas les avoir reconnus.', 'cross', 'À jeter'];
-  return ['Voile total.', 'Rien n’est sorti. Statistiquement, c’est presque un exploit. Bravo, d’une certaine manière.', 'cross', 'Rien à tirer'];
+  const atLeast = n => s * 20 >= n * TOTAL;
+  if (atLeast(18)) return { title: 'Ballon d’Or !', text: 'Pensez à consulter. On garde votre score secret pour le moment… 🤫', mark: 'circle', word: 'Back to Back to Back', secret: true };
+  if (atLeast(14)) return { title: 'Ma STAR ⭐', text: 'À la limite de la perfection.', mark: 'circle', word: 'Brillant', glitter: true };
+  if (atLeast(7)) return { title: 'Pétard !', text: 'Tié un tigre !', mark: 'claws', word: 'RRRrrr' };
+  if (s > 0) return { title: 'Miskina.', text: 'Il y a eu du hasard. Beaucoup de hasard. Vos amis vous remercient de ne pas les avoir reconnus.', mark: 'cross', word: 'À jeter' };
+  return { title: 'Guez', text: 'Rien n’est sorti. Statistiquement, c’est presque un exploit. Bravo, d’une certaine manière.', mark: 'cross', word: 'Rien à tirer' };
 }
 
 // ── Choix du prénom (bottom sheet) ─────────────────────
