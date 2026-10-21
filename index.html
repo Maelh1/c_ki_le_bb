@@ -75,6 +75,7 @@
 @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } }
 .say h2 { margin: 0 0 12px -1px; font-stretch: 125%; font-weight: 800; font-size: 34px; line-height: .95; letter-spacing: -.03em; text-transform: uppercase; text-wrap: balance; }
 .say p { margin: 0; font-size: 17px; line-height: 1.5; color: var(--soft); max-width: 34ch; }
+.foot[hidden] { display: none; }
 .foot { margin-top: 28px; padding-top: 14px; border-top: 1px solid rgba(242, 238, 229, .18); display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 15px; color: var(--muted); }
 
 /* Choix du prénom */
@@ -243,7 +244,7 @@ function renderDone() {
         <div class="frame ghost"></div>
         <div class="frame">
           <span class="seg score">${v.secret ? '--' : `${pad(s)}<small>/${TOTAL}</small>`}</span>
-          <svg class="grease" viewBox="0 0 200 100"><path pathLength="1" d="${MARKS[v.mark]}"/></svg>
+          ${v.mark ? `<svg class="grease" viewBox="0 0 200 100"><path pathLength="1" d="${MARKS[v.mark]}"/></svg>` : ''}
           <span class="scrawl hand${v.glitter ? ' glitter' : ''}${v.word.length > 12 ? ' long' : ''}">${v.word}</span>
         </div>
         <div class="frame ghost"></div>
@@ -252,14 +253,14 @@ function renderDone() {
     <section class="say">
       <h2>${v.title}</h2>
       <p>${v.secret ? '' : `Votre score : ${s} sur ${TOTAL}. `}${v.text}</p>
-      <div class="foot" role="status"><span id="foot"></span><span class="rec" id="rec"></span></div>
+      <div class="foot" id="foot" role="status"><span>Envoi de votre tirage vers l’écran…</span><span class="rec blink"></span></div>
     </section>
   </div>`;
   updateFoot();
   if (v.secret) confettis();
 }
 
-// Confettis du Ballon d'Or, lancés quand le cercle se dessine.
+// Confettis du Ballon d'Or, lancés juste après l'allumage de l'afficheur.
 function confettis() {
   const colors = ['#8FD3FF', '#E3342F', '#F2EEE5', '#E4D6B4', '#FFD45A'];
   const go = () => {
@@ -278,17 +279,16 @@ function confettis() {
 }
 
 function updateFoot() {
+  // Visible seulement pendant l'envoi : il disparaît une fois le score parti.
   const el = document.getElementById('foot');
-  if (!el) return;
-  el.textContent = S.sent ? 'Levez les yeux : votre tirage est sur la planche.' : 'Envoi de votre tirage vers l’écran…';
-  document.getElementById('rec').classList.toggle('blink', !S.sent);
+  if (el) el.hidden = S.sent;
 }
 
 // Paliers exprimés sur 20 (18, 14, 7), et toujours justes si on ajoute des photos.
 // secret : le score n'est pas affiché (gardé pour la révélation du gagnant).
 function verdict(s) {
   const atLeast = n => s * 20 >= n * TOTAL;
-  if (atLeast(18)) return { title: 'Ballon d’Or !', text: 'Pensez à consulter. On garde votre score secret pour le moment… 🤫', mark: 'circle', word: 'Back to Back to Back', secret: true };
+  if (atLeast(18)) return { title: 'Ballon d’Or !', text: 'Pensez à consulter. On garde votre score secret pour le moment… 🤫', mark: '', word: 'Back to Back to Back', secret: true };
   if (atLeast(14)) return { title: 'Ma STAR ⭐', text: 'À la limite de la perfection.', mark: 'circle', word: 'Brillant', glitter: true };
   if (atLeast(7)) return { title: 'Pétard !', text: 'Tié un tigre !', mark: 'claws', word: 'RRRrrr' };
   if (s > 0) return { title: 'Miskina.', text: 'Il y a eu du hasard. Beaucoup de hasard. Vos amis vous remercient de ne pas les avoir reconnus.', mark: 'cross', word: 'À jeter' };
@@ -365,7 +365,7 @@ function hideSheet() {
 function openConfirm() {
   const missing = TOTAL - Object.keys(S.assign).length;
   const title = missing ? `Il reste ${missing} bébé${missing > 1 ? 's' : ''} sans nom.` : 'Sûr de vous ?';
-  const text = missing ? 'Ils compteront comme faux. Vous pouvez encore revenir en arrière.' : 'Une fois développé, impossible de changer. Pas de seconde chance, pas de recours.';
+  const text = missing ? 'Ils compteront comme faux. Vous pouvez encore revenir en arrière.' : 'Une fois développé, impossible de changer. Pas de seconde chance.';
   layer.innerHTML = `
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
     <div class="card">

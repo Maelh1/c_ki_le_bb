@@ -27,6 +27,7 @@ window.BEBES = [
   { prenom: 'Julie',      photo: 'photos/18.jpg' },
   { prenom: 'Ekim',       photo: 'photos/19.jpg' },
   { prenom: 'Izel',       photo: 'photos/20.jpg' },
+  { prenom: 'Julien',     photo: 'photos/21.jpg' },
 ];
 
 // Canal de partage des scores (service gratuit ntfy.sh, sans compte).
