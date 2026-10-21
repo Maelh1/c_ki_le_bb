@@ -284,10 +284,10 @@ function updateFoot() {
   if (el) el.hidden = S.sent;
 }
 
-// Paliers exprimés sur 20 (18, 14, 7), et toujours justes si on ajoute des photos.
+// Paliers en points (18, 14, 7), quel que soit le nombre de photos.
 // secret : le score n'est pas affiché (gardé pour la révélation du gagnant).
 function verdict(s) {
-  const atLeast = n => s * 20 >= n * TOTAL;
+  const atLeast = n => s >= n;
   if (atLeast(18)) return { title: 'Ballon d’Or !', text: 'Pensez à consulter. On garde votre score secret pour le moment… 🤫', mark: '', word: 'Back to Back to Back', secret: true };
   if (atLeast(14)) return { title: 'Ma STAR ⭐', text: 'À la limite de la perfection.', mark: 'circle', word: 'Brillant', glitter: true };
   if (atLeast(7)) return { title: 'Pétard !', text: 'Tié un tigre !', mark: 'claws', word: 'RRRrrr' };
