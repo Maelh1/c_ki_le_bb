@@ -41,7 +41,6 @@
 .count { display: flex; align-items: baseline; gap: 4px; }
 .count .seg { font-size: 26px; }
 .count .of { font-size: 15px; font-weight: 600; color: var(--muted); }
-.help { margin: 0; padding: 12px 18px 0; font-size: 15px; color: var(--muted); }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px 12px; padding: 18px 16px 130px; }
 .tile { position: relative; display: block; width: 100%; padding: 0; text-align: left; }
 .tile .print { transition: transform .2s; }
@@ -197,10 +196,9 @@ function renderGame() {
       <div class="strip mini" id="mini" aria-hidden="true">${'<i></i>'.repeat(TOTAL)}</div>
       <div class="count" aria-label="Photos nommées"><span class="seg" id="cnt">00</span><span class="of">/${TOTAL}</span></div>
     </div>
-    <p class="help">Touchez un tirage, puis notez qui c'est.</p>
     <div class="grid">
       ${ORDER.map((bi, p) => `
-        <button class="tile" data-p="${p}" aria-label="Tirage ${p + 1}">
+        <button class="tile" data-p="${p}" aria-label="Photo ${p + 1}">
           <div class="print" style="--r:${tilt(p)}deg"><div class="img" style="background-image:${bg(bi)}"><span class="seg num">${pad(p + 1)}</span></div></div>
           <span class="tape hand" style="--t:${p % 2 ? 2 : -2.5}deg" hidden></span>
         </button>`).join('')}
@@ -222,7 +220,7 @@ function updateGame() {
     const has = S.assign[p] !== undefined;
     tape.hidden = !has;
     tape.textContent = has ? BEBES[S.assign[p]].prenom : '';
-    t.setAttribute('aria-label', `Tirage ${p + 1}${has ? ', ' + BEBES[S.assign[p]].prenom : ''}`);
+    t.setAttribute('aria-label', `Photo ${p + 1}${has ? ', ' + BEBES[S.assign[p]].prenom : ''}`);
     t.classList.toggle('on', active === p);
   });
   const btn = app.querySelector('#submit');
@@ -311,12 +309,12 @@ function openSheet(p) {
   layer.innerHTML = `
   <div class="sheet-wrap">
     <div class="veil" data-close></div>
-    <div class="sheet" role="dialog" aria-modal="true" aria-label="Choisir un prénom pour le tirage ${p + 1}">
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="Choisir un prénom pour la photo ${p + 1}">
       <div class="sheet-head">
         <div class="print"><div class="img" style="background-image:${bg(ORDER[p])}"></div></div>
         <div class="sheet-title">
-          <span class="meta"><span>Tirage n°${p + 1}</span></span>
-          <strong>C'est qui, ce petit être&nbsp;?</strong>
+          <span class="meta"><span>Photo n°${p + 1}</span></span>
+          <strong>C'est qui ce&nbsp;bebew&nbsp;?</strong>
         </div>
         <button class="close" data-close aria-label="Fermer">×</button>
       </div>
@@ -325,7 +323,7 @@ function openSheet(p) {
           const on = byName[i];
           const cur = on === p, used = on !== undefined && !cur;
           return `<button class="opt${cur ? ' cur' : used ? ' used' : ''}" data-n="${i}">
-            <b>${esc(n)}</b>${on !== undefined ? `<small>${cur ? 'Choix actuel' : 'Déjà sur le tirage ' + (on + 1)}</small>` : ''}
+            <b>${esc(n)}</b>${on !== undefined ? `<small>${cur ? 'Choix actuel' : 'Déjà sur la photo ' + (on + 1)}</small>` : ''}
           </button>`;
         }).join('')}
         ${has ? '<button class="unset" data-unset>Retirer le prénom</button>' : ''}
