@@ -8,17 +8,20 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Caveat:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="theme.css">
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <style>
 html, body { height: 100%; overflow: hidden; }
 /* La planche est composée en 1920×1080 puis mise à l'échelle de l'écran. */
-.board { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(var(--k, 1)); display: grid; grid-template-columns: minmax(0, 1fr) 470px; grid-template-rows: minmax(0, 1fr) auto; }
+.board { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(var(--k, 1)); display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
 main { padding: 40px 56px 22px; display: flex; flex-direction: column; gap: 18px; min-width: 0; min-height: 0; }
 .head { display: flex; justify-content: space-between; align-items: flex-end; }
 h1 { margin: 0 0 0 -6px; font-stretch: 125%; font-weight: 800; font-size: 84px; line-height: .86; letter-spacing: -.035em; text-transform: uppercase; }
 h1 em { font-style: normal; color: var(--glow); }
 .live { display: flex; align-items: center; gap: 12px; padding-bottom: 8px; font-size: 18px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .live .rec { width: 14px; height: 14px; }
+.side { display: flex; align-items: flex-end; gap: 48px; }
+.counter { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.counter .seg { font-size: 112px; line-height: .9; }
+.counter span:last-child { font-size: 20px; color: var(--muted); }
 
 .toast-slot { height: 58px; }
 .toast { display: inline-flex; align-items: center; gap: 18px; height: 58px; background: var(--glow); color: var(--ink); padding: 0 22px 0 14px; font-size: 26px; transform: rotate(-.6deg); box-shadow: 0 10px 24px rgba(0, 0, 0, .5); animation: slide .4s cubic-bezier(.2, .8, .2, 1); }
@@ -74,17 +77,36 @@ h1 em { font-style: normal; color: var(--glow); }
 .empty strong { font-stretch: 125%; font-weight: 800; font-size: 64px; line-height: .95; letter-spacing: -.03em; text-transform: uppercase; }
 .empty span { font-size: 26px; color: var(--muted); }
 
-aside { grid-row: 1 / span 2; grid-column: 2; display: flex; flex-direction: column; gap: 22px; padding: 44px 44px 40px 0; }
-.counter { display: flex; flex-direction: column; gap: 8px; }
-.counter .seg { font-size: 150px; line-height: .9; }
-.counter span:last-child { font-size: 22px; color: var(--muted); }
-.env { margin-top: auto; background: var(--print); color: var(--ink); padding: 0 0 24px; transform: rotate(1.2deg); box-shadow: 0 24px 48px rgba(0, 0, 0, .6); }
-.env .band { background: var(--glow); padding: 14px 26px; display: flex; justify-content: space-between; font-stretch: 125%; font-weight: 800; font-size: 18px; letter-spacing: .04em; text-transform: uppercase; }
-.env h2 { margin: 22px 26px 18px; font-stretch: 125%; font-weight: 800; font-size: 42px; line-height: .92; letter-spacing: -.03em; text-transform: uppercase; }
-.qr { margin: 0 26px; padding: 14px; border: 2px dashed rgba(21, 18, 14, .35); background: #fff; }
-.qr svg, .qr img { display: block; width: 100%; height: auto; }
-.env p { margin: 14px 26px 0; display: flex; justify-content: space-between; gap: 10px; font-size: 17px; color: #4B453C; }
-.env .url { word-break: break-all; }
+/* Annonce des gagnants : 3e, puis 2e, puis 1re place */
+.reveal { position: absolute; inset: 0; z-index: 50; background: var(--film); display: flex; flex-direction: column; padding: 56px 56px 40px; cursor: pointer; }
+.reveal[hidden] { display: none; }
+.reveal .meta { font-size: 18px; }
+.reveal h2 { margin: 14px 0 0 -6px; font-stretch: 125%; font-weight: 800; font-size: 104px; line-height: .9; letter-spacing: -.035em; text-transform: uppercase; animation: slide .5s cubic-bezier(.2, .8, .2, 1); }
+.reveal h2 em { font-style: normal; color: var(--glow); }
+.rv-roll { margin: auto 0; }
+.rv-roll .edge { display: flex; gap: 22px; padding: 0 22px 8px; font-size: 16px; }
+.rv-roll .edge span { flex: 1; }
+.rv-roll .edge span.p1 { flex: 1.35; }
+.rv-roll .strip { display: flex; gap: 22px; padding: 30px 22px; }
+.rv-roll .strip::before, .rv-roll .strip::after { height: 14px; background-size: 26px 14px; }
+.rv-f { flex: 1; position: relative; min-width: 0; height: 470px; background: #120F0C; display: flex; flex-direction: column; justify-content: flex-end; padding: 30px 34px; }
+.rv-f.p1 { flex: 1.35; }
+.rv-f.on { background: radial-gradient(130% 100% at 50% 40%, #2E271E, #14110D); animation: develop 1.2s ease-out; }
+.rv-f .rk { position: absolute; top: 18px; left: 22px; font-size: 16px; }
+.rv-f .q { position: absolute; inset: 0; display: grid; place-items: center; font-stretch: 125%; font-weight: 800; font-size: 220px; color: #2A2620; transition: opacity .6s; }
+.rv-f.on .q, .rv-f.blank .q { opacity: 0; }
+.rv-f .pl { font-size: 24px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--glow); }
+.rv-f .nm { margin: 8px 0 14px; font-stretch: 125%; font-weight: 800; font-size: 76px; line-height: .95; letter-spacing: -.02em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rv-f.p1 .nm { font-size: 96px; }
+.rv-f .pl, .rv-f .nm { opacity: 0; transform: translateY(14px); transition: opacity .6s, transform .6s cubic-bezier(.2, .8, .2, 1); }
+.rv-f.named .pl, .rv-f.named .nm { opacity: 1; transform: none; }
+.rv-f .sc { font-size: 110px; line-height: 1; opacity: 0; transition: opacity .3s; }
+.rv-f.p1 .sc { font-size: 140px; }
+.rv-f.on .sc { opacity: 1; }
+.rv-f .sc small { font-family: 'Archivo', sans-serif; font-size: 36px; color: var(--muted); text-shadow: none; letter-spacing: 0; font-weight: 600; margin-left: 8px; }
+.rv-f .g1 { --sw: 2; --delay: .1s; }
+.rv-f .crown { right: 30px; top: 18px; font-size: 64px; animation: burn .4s 1s both; }
+.rv-hint { display: flex; justify-content: space-between; font-size: 17px; color: var(--muted); }
 
 .ticker { grid-column: 1; overflow: hidden; white-space: nowrap; background: var(--base); padding: 16px 0 14px; border-top: 1px solid #2B2620; }
 .ticker > div { display: inline-block; animation: marq 45s linear infinite; font-size: 20px; }
@@ -95,29 +117,29 @@ aside { grid-row: 1 / span 2; grid-column: 2; display: flex; flex-direction: col
   <main>
     <div class="head">
       <h1>C'est qui<br><em>ce&nbsp;bebew</em>&nbsp;?</h1>
-      <div class="live"><span class="rec"></span>En direct</div>
+      <div class="side">
+        <div class="live"><span class="rec"></span>En direct</div>
+        <div class="counter"><span class="seg" id="count">00</span><span id="countLbl"></span></div>
+      </div>
     </div>
     <div class="toast-slot" id="toast" aria-live="polite"></div>
     <div class="stage" id="stage"></div>
   </main>
 
-  <aside>
-    <div class="counter"><span class="seg" id="count">00</span><span id="countLbl"></span></div>
-    <div class="env">
-      <div class="band"><span>Dépôt des films</span><span id="day"></span></div>
-      <h2>Scannez<br>pour jouer</h2>
-      <div class="qr" id="qr" role="img" aria-label="QR code du jeu"></div>
-      <p><span class="url" id="url"></span><span>Tirage en 1 minute</span></p>
-    </div>
-  </aside>
-
   <div class="ticker edge" aria-hidden="true"><div id="ticker"></div></div>
+
+  <section class="reveal" id="reveal" hidden aria-live="polite">
+    <span class="meta"><span>Remise des prix</span></span>
+    <h2 id="rvTitle"></h2>
+    <div class="rv-roll" id="rvRoll"></div>
+    <p class="rv-hint"><span id="rvHint"></span><span>Échap pour revenir au classement</span></p>
+  </section>
 </div>
 
 <script src="config.js"></script>
 <script src="shared.js"></script>
 <script>
-const { esc, parseMessage, fetchScores, subscribe } = Shared;
+const { esc, parseMessage, fetchScores, subscribe, loadConfetti } = Shared;
 const params = new URLSearchParams(location.search);
 const STORE = 'bebes_board_' + window.CANAL;
 const CUTOFF = 'bebes_cutoff_' + window.CANAL;
@@ -292,18 +314,87 @@ function renderToast() {
   $('toast').innerHTML = `<div class="toast"><b>Nouveau tirage</b><span>${esc(t.name)} développe un ${t.score}/${t.total}. ${quip}</span></div>`;
 }
 
-// ── QR code vers le jeu ────────────────────────────────
-const gameUrl = location.origin + location.pathname.replace(/[^/]*$/, '');
-$('url').textContent = gameUrl.replace(/^https?:\/\//, '');
-$('day').textContent = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-try {
-  const qr = qrcode(0, 'M');
-  qr.addData(gameUrl);
-  qr.make();
-  $('qr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
-} catch (e) {
-  $('qr').innerHTML = `<img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=0&data=${encodeURIComponent(gameUrl)}">`;
+// ── Annonce des gagnants ───────────────────────────────
+// A (ou scoreboard.html?annonce) ouvre l'annonce ; Espace, Entrée, → ou un clic
+// révèle la place suivante (3e, puis 2e, puis 1re) ; Échap revient au classement.
+const reveal = $('reveal');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+const TITLES = ['Le <em>Ballon d’Or</em>', 'Deuxième place', 'Troisième place'];
+const NEXT = ['le Ballon d’Or', 'la 2e place', 'la 3e place'];
+let snap = [], step = 0, busy = false;
+
+function openReveal() {
+  const all = ranked();
+  snap = all.slice(0, 3);   // photo du podium au moment de l'annonce
+  const label = s => (s.rank === 1 ? '1re' : s.rank + 'e') + ' place' + (all.filter(o => o.rank === s.rank).length > 1 ? ' ex æquo' : '');
+  const order = [1, 0, 2];  // à l'écran : 2e, 1re, 3e
+  $('rvRoll').innerHTML = `
+    <div class="edge" aria-hidden="true">${order.map(i => `<span class="p${i + 1}">▸ ${i + 1}&emsp;▸ ${i + 1}A</span>`).join('')}</div>
+    <div class="strip">${order.map(i => {
+      const s = snap[i];
+      return `<div class="rv-f p${i + 1}${s ? '' : ' blank'}" id="rv${i}"><span class="edge rk">Vue ${i + 1}</span><span class="q">?</span>${s
+        ? `<span class="pl">${label(s)}</span><span class="nm">${esc(s.name)}</span><span class="seg sc"><b>00</b><small>/${s.total}</small></span>` : ''}</div>`;
+    }).join('')}</div>`;
+  step = snap.length;
+  busy = false;
+  $('rvTitle').innerHTML = step ? 'Et les gagnants sont…' : 'Personne n’a encore joué.';
+  $('rvHint').textContent = step ? `Espace pour révéler ${NEXT[step - 1]}` : '';
+  reveal.hidden = false;
 }
+
+function countUp(el, to, ms) {
+  return new Promise(done => {
+    if (reduce) { el.textContent = pad(to); return done(); }
+    const t0 = performance.now();
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / ms);
+      el.textContent = pad(Math.round(to * (1 - Math.pow(1 - k, 3))));
+      k < 1 ? requestAnimationFrame(tick) : done();
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
+async function next() {
+  if (reveal.hidden || busy || step <= 0) return;
+  busy = true;
+  const i = --step, s = snap[i], f = $('rv' + i);
+  $('rvTitle').innerHTML = TITLES[i];
+  $('rvHint').textContent = '';
+  await wait(600);
+  f.classList.add('on');                        // le cadre se développe
+  await wait(900);
+  await countUp(f.querySelector('.sc b'), s.score, i ? 1600 : 2600);
+  f.classList.add('named');                     // puis le prénom apparaît
+  if (!i) {
+    f.insertAdjacentHTML('beforeend', `<svg class="grease g1" viewBox="0 0 200 100" aria-hidden="true"><path pathLength="1" d="${CIRCLE}"/></svg><span class="scrawl hand crown">Ballon d’Or&nbsp;!</span>`);
+    fete();
+  }
+  await wait(700);
+  $('rvHint').textContent = step ? `Espace pour révéler ${NEXT[step - 1]}` : '';
+  busy = false;
+}
+
+function fete() {
+  const o = { colors: ['#8FD3FF', '#E3342F', '#F2EEE5', '#E4D6B4', '#FFD45A'], disableForReducedMotion: true };
+  loadConfetti().then(confetti => {
+    confetti({ ...o, particleCount: 160, angle: 60, spread: 70, startVelocity: 62, origin: { x: 0, y: .85 } });
+    confetti({ ...o, particleCount: 160, angle: 120, spread: 70, startVelocity: 62, origin: { x: 1, y: .85 } });
+    const end = Date.now() + 4000;
+    (function rain() {
+      confetti({ ...o, particleCount: 7, startVelocity: 0, ticks: 320, gravity: .6, origin: { x: Math.random(), y: -.05 } });
+      if (Date.now() < end) setTimeout(rain, 120);
+    })();
+  }).catch(() => {});
+}
+
+addEventListener('keydown', e => {
+  if (e.key === 'a' || e.key === 'A') { if (reveal.hidden) openReveal(); }
+  else if (e.key === 'Escape') reveal.hidden = true;
+  else if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') { e.preventDefault(); next(); }
+});
+reveal.addEventListener('click', next);
 
 // ── Temps réel ─────────────────────────────────────────
 async function poll(announce) {
@@ -317,6 +408,7 @@ async function poll(announce) {
 
 render();
 poll(false).then(() => {
+  if (params.has('annonce')) openReveal();
   subscribe(Math.floor(Date.now() / 1000) - 5, m => { if (add(m, true)) render(); });
   // Filet de sécurité si la connexion temps réel décroche.
   setInterval(() => poll(true), 30000);

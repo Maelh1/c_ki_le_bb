@@ -36,9 +36,13 @@ L'ordre d'affichage est mélangé automatiquement : la photo 01 n'apparaît pas 
 
 ## 3. Le jour J
 
-1. Sur l'ordi branché à la télé, ouvrez `scoreboard.html` en plein écran (touche F11).
-   Le QR code pointe automatiquement vers le jeu.
-2. Les invités scannent le QR code, jouent, et leur score arrive en direct sur l'écran.
+1. Imprimez l'affiche avec le QR code (dans le dossier `imprimer/`, non publié : version sombre ou
+   version claire, plus économe en encre). Format A5, 300 dpi.
+2. Sur l'ordi branché à la télé, ouvrez `scoreboard.html` en plein écran (touche F11).
+3. Les invités scannent le QR code de l'affiche, jouent, et leur score arrive en direct sur l'écran.
+4. **Annonce des gagnants** : sur l'ordi du classement, appuyez sur **A**. Chaque appui sur
+   **Espace** (ou un clic) révèle la place suivante : 3e, puis 2e, puis le Ballon d'Or.
+   **Échap** revient au classement. `scoreboard.html?annonce` ouvre directement l'annonce.
 
 **Après vos tests**, remettez le classement à zéro en ouvrant une fois
 `scoreboard.html?reset` sur l'ordi du classement.

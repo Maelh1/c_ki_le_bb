@@ -115,7 +115,7 @@
 <script src="config.js"></script>
 <script src="shared.js"></script>
 <script>
-const { esc, shuffled, publishScore } = Shared;
+const { esc, shuffled, publishScore, loadConfetti } = Shared;
 const BEBES = window.BEBES;
 const TOTAL = BEBES.length;
 // ORDER[position affichée] = index du bébé dans la config
@@ -262,20 +262,14 @@ function renderDone() {
 
 // Confettis du Ballon d'Or, lancés juste après l'allumage de l'afficheur.
 function confettis() {
-  const colors = ['#8FD3FF', '#E3342F', '#F2EEE5', '#E4D6B4', '#FFD45A'];
-  const go = () => {
-    const opts = { colors, disableForReducedMotion: true };
+  const opts = { colors: ['#8FD3FF', '#E3342F', '#F2EEE5', '#E4D6B4', '#FFD45A'], disableForReducedMotion: true };
+  loadConfetti().then(confetti => {
     setTimeout(() => {
       confetti({ ...opts, particleCount: 90, angle: 60, spread: 70, origin: { x: 0, y: .7 } });
       confetti({ ...opts, particleCount: 90, angle: 120, spread: 70, origin: { x: 1, y: .7 } });
     }, 1900);
     setTimeout(() => confetti({ ...opts, particleCount: 140, spread: 110, startVelocity: 38, origin: { y: .35 } }), 2600);
-  };
-  if (window.confetti) return go();
-  const tag = document.createElement('script');
-  tag.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
-  tag.onload = go;
-  document.head.appendChild(tag);
+  }).catch(() => {});
 }
 
 function updateFoot() {

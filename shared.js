@@ -50,5 +50,18 @@
     return es;
   }
 
-  window.Shared = { esc, shuffled, publishScore, parseMessage, fetchScores, subscribe };
+  // Charge canvas-confetti seulement quand il y a quelque chose à fêter.
+  let confettiLib = null;
+  function loadConfetti() {
+    if (!confettiLib) confettiLib = new Promise((resolve, reject) => {
+      const tag = document.createElement('script');
+      tag.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
+      tag.onload = () => resolve(window.confetti);
+      tag.onerror = reject;
+      document.head.appendChild(tag);
+    });
+    return confettiLib;
+  }
+
+  window.Shared = { esc, shuffled, publishScore, parseMessage, fetchScores, subscribe, loadConfetti };
 })();
