@@ -33,7 +33,7 @@ window.BEBES = [
 // Canal de partage des scores (service gratuit ntfy.sh, sans compte).
 // Gardez ce nom long et aléatoire : quiconque le connaît peut envoyer des scores.
 // Pour repartir de zéro (après vos tests), changez-le OU ouvrez scoreboard.html?reset
-window.CANAL = 'qui-etait-ce-bebe-b4c87d7a0c8f';
+window.CANAL = 'cest-qui-ce-bebew-705eed1fd5c9';
 
 // Change l'ordre d'affichage des photos (même ordre pour tout le monde).
 // Mettez n'importe quel autre nombre pour obtenir un autre mélange.
